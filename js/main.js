@@ -43,7 +43,7 @@ async function submit()
 
 	if(trueChecks.length != 0)
 	{
-		let response = await fetch("http://localhost:8887/test", {
+		let response = await fetch("https://tracksjosh.pythonanywhere.com/test", {
 			method: "POST",
 			headers: {
 					"Content-Type": "application/json"
@@ -53,7 +53,7 @@ async function submit()
 		let data = await response.json();
 		webapp.innerHTML = data.received;
 		
-		let questionResponse = await fetch("http://localhost:8887/question", {
+		let questionResponse = await fetch("https://tracksjosh.pythonanywhere.com/question", {
 			method: "GET",
 			headers: {
 					"Content-Type": "application/json"
@@ -72,7 +72,7 @@ async function submit()
 
 async function startGame()
 {
-	let response = await fetch("http://localhost:8887/start", {
+	let response = await fetch("https://tracksjosh.pythonanywhere.com/start", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -109,7 +109,7 @@ async function selectAnswer(ans, id)
 {
 	console.log("Answer: "+ans);
 	var que = document.getElementById("question");
-	let response = await fetch("http://localhost:8887/ans", {
+	let response = await fetch("https://tracksjosh.pythonanywhere.com/ans", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -136,7 +136,7 @@ async function inputAnswer(answer, data2)
 	console.log("Answer: "+answer);
 	console.log("ID: "+id);
 	var que = document.getElementById("question");
-	let response = await fetch("http://localhost:8887/anstext", {
+	let response = await fetch("https://tracksjosh.pythonanywhere.com/anstext", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
