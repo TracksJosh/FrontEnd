@@ -1,5 +1,5 @@
 const delay = ms => new Promise(res => setTimeout(res, ms));
-const heroku="https://quivia-7c117ffa0dd4.herokuapp.com"
+const heroku="https://quivia-7c117ffa0dd4.herokuapp.com";
 //const heroku="http://localhost:8887";
 var user = "";
 
