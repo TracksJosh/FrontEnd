@@ -1,4 +1,7 @@
 const delay = ms => new Promise(res => setTimeout(res, ms));
+//const heroku="https://quivia-7c117ffa0dd4.herokuapp.com"
+const heroku="http://localhost:8887";
+var user = "";
 
 function checkAll()
 {
@@ -43,7 +46,7 @@ async function submit()
 
 	if(trueChecks.length != 0)
 	{
-		let response = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/test", {
+		let response = await fetch(heroku+"/test", {
 			method: "POST",
 			headers: {
 					"Content-Type": "application/json"
@@ -53,7 +56,7 @@ async function submit()
 		let data = await response.json();
 		webapp.innerHTML = data.received;
 		
-		let questionResponse = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/question", {
+		let questionResponse = await fetch(heroku+"/question", {
 			method: "GET",
 			headers: {
 					"Content-Type": "application/json"
@@ -72,7 +75,7 @@ async function submit()
 
 async function startGame()
 {
-	let response = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/start", {
+	let response = await fetch(heroku+"/start", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -109,7 +112,7 @@ async function selectAnswer(ans, id)
 {
 	console.log("Answer: "+ans);
 	var que = document.getElementById("question");
-	let response = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/ans", {
+	let response = await fetch(heroku+"/ans", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -136,7 +139,7 @@ async function inputAnswer(answer, data2)
 	console.log("Answer: "+answer);
 	console.log("ID: "+id);
 	var que = document.getElementById("question");
-	let response = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/anstext", {
+	let response = await fetch(heroku+"/anstext", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -158,8 +161,8 @@ async function inputAnswer(answer, data2)
 
 async function loadchecklist()
 {
-	var body = document.getElementById("body");
-	let response = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/", {
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -168,8 +171,42 @@ async function loadchecklist()
 	});
 	let data = await response.json();
 	body.innerHTML = data["html"];
+	const logged = document.getElementById("logged");
+	console.log(logged);
+	if(user.length == 0) logged.innerHTML = `<button onclick=loadlogin()>Login</button><button align=right onclick=loadsignup()>Sign Up</button>`;
+	else logged.innerHTML = `<p>`+user+`</p><button align=right onclick=logout()>Log Out</button>`;
 	
 }
 
-loadchecklist();
+async function loadsignup()
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "signup"})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+}
+
+async function loadlogin()
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "login"})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadchecklist();
+});
 
