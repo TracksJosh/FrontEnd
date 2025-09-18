@@ -155,3 +155,21 @@ async function inputAnswer(answer, data2)
 		location.reload();
 	}
 }
+
+async function loadchecklist()
+{
+	var body = document.getElementById("body");
+	let response = await fetch("https://quivia-7c117ffa0dd4.herokuapp.com/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "checklist"})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+	
+}
+
+loadchecklist();
+
