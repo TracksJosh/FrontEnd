@@ -206,6 +206,170 @@ async function loadlogin()
 	body.innerHTML = data["html"];
 }
 
+function signup()
+{
+	const us = document.getElementById("signup_user1");
+	const cu = document.getElementById("signup_user2");
+	const em = document.getElementById("signup_email1");
+	const ce = document.getElementById("signup_email2");
+	const pa = document.getElementById("signup_pass1");
+	const cpa = document.getElementById("signup_pass2");
+	const username = us.value;
+	const conf_username = cu.value;
+	const email = em.value;
+	const conf_email = ce.value;
+	const password = pa.value;
+	const conf_password = cpa.value;
+	
+	var checker = 0;
+	
+	if (emailFormatted(email)) 
+	{
+		if (email === conf_email) 
+		{
+			checker += 4;
+		} 
+		else 
+		{
+			alert("Email and confirmation email do not match.");
+		}
+	}
+	else 
+	{	
+		alert("Invalid email format. Must be username@domain with an allowed TLD.");
+	}
+	if (usernameFormatted(username)) 
+	{
+		if (username === conf_username) 
+		{
+			checker += 2;
+		} 
+		else 
+		{
+			alert("Username and confirmation username do not match.");
+		}
+	} 
+	else 
+	{
+		alert("Invalid username. Usernames can only contain letters and numbers and must include at least one letter.");
+	}
+	if (passwordFormatted(password)) 
+	{
+		if (password === conf_password) 
+		{
+			checker += 1;
+		} 
+		else 
+		{
+			alert("Password and confirmation password do not match.");
+		}
+	} 
+	else 
+	{
+		alert("Invalid password. Passwords must be 8-16 characters, include one uppercase letter, one number, and one special character.");
+	}
+	if(checker == 7)
+	{
+		asyncRegister(username, email, password);
+	}
+}
+
+function emailFormatted(email)
+{
+    var temp = false;
+    var alphabetCheck = false;
+	const regex = /^[A-Za-z0-9.-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$/;
+	const tlds = [".com", ".net", ".org", ".edu", ".int", ".gov", ".mil"];
+    if (!regex.test(email)) {
+        return false;
+    }
+	
+	const lowerEmail = email.toLowerCase();
+    const hasValidTLD = tlds.some(tld => lowerEmail.endsWith(tld));
+    if (!hasValidTLD) {
+        return false;
+    }
+	const username = email.substring(0, email.indexOf("@"));
+    if (!/[A-Za-z]/.test(username)) {
+        return false;
+    }
+	
+	const domain = email.substring(email.indexOf("@") + 1, email.lastIndexOf("."));
+    if (domain.startsWith(".") || domain.startsWith("-") || 
+        domain.endsWith(".") || domain.endsWith("-")) {
+        return false;
+    }
+
+    return true;
+}
+
+function usernameFormatted(username) {
+    const regex = /^[A-Za-z0-9]+$/;
+    if (!regex.test(username)) {
+        return false;
+    }
+    if (!/[A-Za-z]/.test(username)) {
+        return false;
+    }
+
+    return true;
+}
+
+function passwordFormatted(password) {
+    if (password.length < 8 || password.length > 16) {
+        return false;
+    }
+    if (!/[A-Z]/.test(password)) {
+        return false;
+    }
+    if (!/[0-9]/.test(password)) {
+        return false;
+    }
+    if (!/[^A-Za-z0-9]/.test(password)) {
+        return false;
+    }
+
+    return true;
+}
+
+async function hashString(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function asyncRegister(username, email, password)
+{
+	password = await hashString(password);
+	let response = await fetch(heroku+"/register", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"username": username, "email": email, "password": password})
+	});
+	let data = await response.json();
+	
+	if(data["status"] == "success")
+	{
+		alert("Your account has been successfully registered.");
+		user = username;
+		loadchecklist();
+	}
+	else if(data["status"] == "no")
+	{
+		alert("This username is taken.");
+	}
+	else
+	{
+		alert("I don't know what happened. Server down?");
+	}
+	
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     loadchecklist();
 });
