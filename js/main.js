@@ -360,7 +360,7 @@ async function asyncRegister(username, email, password)
 	}
 	else if(data["status"] == "no")
 	{
-		alert("This username is taken.");
+		alert("Email or username already registered.");
 	}
 	else
 	{
