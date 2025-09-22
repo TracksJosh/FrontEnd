@@ -356,6 +356,11 @@ async function asyncRegister(username, email, password)
 	{
 		alert("Your account has been successfully registered.");
 		user = username;
+		const expires = new Date();
+        expires.setDate(expires.getDate() + 1);
+        document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
+
+        localStorage.setItem("username", username);
 		loadchecklist();
 	}
 	else if(data["status"] == "no")
@@ -369,8 +374,111 @@ async function asyncRegister(username, email, password)
 	
 }
 
+async function login()
+{
+	const us = document.getElementById("login_user");
+	const pa = document.getElementById("login_pass");
+	const username = us.value;
+	var password = pa.value;
+	
+	password = await hashString(password);
+	let response = await fetch(heroku+"/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"username": username, "password": password})
+	});
+	let data = await response.json();
+	
+	if(data["status"] == "success")
+	{
+		alert("You have successfully logged on.");
+		user = username;
+		const expires = new Date();
+        expires.setDate(expires.getDate() + 1);
+        document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
+
+        localStorage.setItem("username", username);
+		loadchecklist();
+	}
+	else if(data["status"] == "incorrect_pass")
+	{
+		alert("The password you entered is incorrect.");
+	}
+	else if(data["status"] == "no_user")
+	{
+		alert("This username does not exist.");
+	}
+	else
+	{
+		alert("I don't know what happened. Server down?");
+	}
+	
+}
+
+async function logout()
+{
+	const token = getCookie("session_token");
+	let response = await fetch(heroku+"/logout", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"username": user, "token": token})
+	});
+	let data = await response.json();
+	
+	if(data["status"] == "success")
+	{
+		alert("You have successfully logged off.");
+		user = "";
+		document.cookie = "session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+		loadchecklist();
+	}
+	else if(data["status"] == "fail")
+	{
+		alert("We could not log you out.");
+	}
+	else
+	{
+		alert("I don't know what happened. Server down?");
+	}
+	
+}
+
+async function checkCookie()
+{
+	const token = getCookie("session_token");
+	
+	let response = await fetch(heroku+"/session", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"token": token})
+	});
+	let data = await response.json();
+	
+	if(data["status"] == "success")
+	{
+		user = data["username"];
+	}
+	loadchecklist();
+	
+}
+
+function getCookie(name)
+{
+	const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) return value;
+    }
+    return null;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadchecklist();
+    checkCookie();
 });
 
