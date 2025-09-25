@@ -354,12 +354,15 @@ async function asyncRegister(username, email, password)
 	
 	if(data["status"] == "success")
 	{
-		alert("Your account has been successfully registered.");
+		
+		#alert("Your account has been successfully registered.");
+		const body = document.getElementById("body");
+		body.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>Your account has been successfully registered!! Logging in now.</h3>`;
 		user = username;
 		const expires = new Date();
         expires.setDate(expires.getDate() + 1);
         document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
-
+		await delay(5000);
         localStorage.setItem("username", username);
 		loadchecklist();
 	}
@@ -393,12 +396,14 @@ async function login()
 	
 	if(data["status"] == "success")
 	{
-		alert("You have successfully logged on.");
+		#alert("You have successfully logged on.");
+		const body = document.getElementById("body");
+		body.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>You have successfully logged in!!</h3>`;
 		user = username;
 		const expires = new Date();
         expires.setDate(expires.getDate() + 1);
         document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
-
+		await delay(5000);
         localStorage.setItem("username", username);
 		loadchecklist();
 	}
