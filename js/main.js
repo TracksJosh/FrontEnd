@@ -2,6 +2,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 const heroku="https://quivia-7c117ffa0dd4.herokuapp.com";
 //const heroku="http://localhost:8887";
 var user = "";
+var score = 0;
+var correct = 0;
 
 function checkAll()
 {
@@ -84,52 +86,83 @@ async function startGame()
 	});
 	let data = await response.json();
 	var que = document.getElementById("question");
-	que.innerHTML = `<p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	que.innerHTML = `<h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
 	displayAns(data, que);
+	var sco = document.getElementById("score");
+	sco.innerHTML = "Score: "+score;
 }
 
-function displayAns(data, que)
-{
-	let answers = [data["answer"], ...data["distractors"]];
-
-	// Fisher-Yates shuffle
-	for (let i = answers.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[answers[i], answers[j]] = [answers[j], answers[i]];
-	}
-	
-	// Create buttons in randomized order
-	answers.forEach(ans => {
-		let btn = document.createElement("button");
-		btn.id = data["id"];
-		btn.innerHTML = ans;
-		btn.onclick = () => selectAnswer(ans, data["id"]);
-		que.appendChild(btn);
-	});
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
-async function selectAnswer(ans, id)
-{
-	console.log("Answer: "+ans);
-	var que = document.getElementById("question");
-	let response = await fetch(heroku+"/ans", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"answer": ans, "question": id})
-	});
-	let data = await response.json();
-	que.innerHTML = `<p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
-	if(data["id"] != "NaN")
+// Display answers as buttons
+function displayAns(data, que) {
+    // Combine correct answer with distractors
+    let answers = [data.answer, ...data.distractors];
+    answers = shuffleArray(answers);
+
+    // Create buttons
+    answers.forEach(ans => {
+        let btn = document.createElement("button");
+        btn.innerHTML = ans.text;           // show text
+        btn.onclick = () => selectAnswer(ans, data.id);
+        que.appendChild(btn);
+    });
+}
+
+async function selectAnswer(ans, id) {
+    console.log("Selected:", ans.text);
+    let response = await fetch(heroku+"/ans", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({"answer": ans, "question": id})
+    });
+    let data = await response.json();
+
+    // Update question and lead-in
+    let que = document.getElementById("question");
+    que.innerHTML = `<h5 id="score">Score: ${score}</h5>
+                     <p id="leadin">${data.leadin}</p>
+                     <p>${data.question}</p>`;
+
+    // Update score
+    if (data.status == "correct")
 	{
-		displayAns(data, que);
+		score += 10;
+		correct += 1;
 	}
-	else
+    else
 	{
-		await delay(5000);
-		location.reload();
+		score -= 5;
+		alert(ans.explanation)
 	}
+
+    document.getElementById("score").innerHTML = "Score: " + score;
+
+    // Show next set of answers
+    if (data.id != "NaN") {
+        displayAns(data, que);
+    } else {
+        // End of quiz
+        setTimeout(() => location.reload(), 5000);
+    }
+}
+
+window.onload = async () => {
+    // load first question
+    let que = document.getElementById("question");
+    displayAns({
+        answer: {text: questions[0].answer, explanation: "Correct!!"},
+        distractors: questions[0].distractors,
+        id: questions[0].id,
+        question: questions[0].question,
+        leadin: questions[0].leadin
+    }, que);
 }
 
 async function inputAnswer(answer, data2)
@@ -147,13 +180,25 @@ async function inputAnswer(answer, data2)
 			body: JSON.stringify({"answer": answer, "question": id, "unformat": data2["unformatted"]})
 	});
 	let data = await response.json();
-	que.innerHTML = `<p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	que.innerHTML = `<h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
 	if(data["id"] != "NaN")
 	{
+		if(data["status"] == "correct")
+		{
+			score += 10;
+			correct += 1;
+		}
+		else if(data["status"] == "incorrect")
+		{
+			score -= 5;
+		}
+		var sco = document.getElementById("score");
+		sco.innerHTML = "Score: "+score;
 		displayAns(data, que);
 	}
 	else
 	{
+		
 		await delay(5000);
 		location.reload();
 	}
