@@ -102,17 +102,22 @@ function shuffleArray(array) {
 
 // Display answers as buttons
 function displayAns(data, que) {
-    // Combine correct answer with distractors
-    let answers = [data.answer, ...data.distractors];
-    answers = shuffleArray(answers);
+    let distractorsArray = getDistractors(data);
+	let answers = [data.answer, ...distractorsArray];
+	answers = shuffleArray(answers);
 
-    // Create buttons
-    answers.forEach(ans => {
-        let btn = document.createElement("button");
-        btn.innerHTML = ans.text;           // show text
-        btn.onclick = () => selectAnswer(ans, data.id);
-        que.appendChild(btn);
-    });
+	answers.forEach(ans => {
+		let btn = document.createElement("button");
+		btn.innerHTML = ans.text;  // use the text property
+		btn.onclick = () => selectAnswer(ans, data.id, que);
+		que.appendChild(btn);
+	});
+}
+
+function getDistractors(data) {
+    if (Array.isArray(data.distractors)) return data.distractors;
+    if (Array.isArray(data.distractors?.distractors)) return data.distractors.distractors;
+    return [];
 }
 
 async function selectAnswer(ans, id) {
