@@ -103,6 +103,7 @@ function shuffleArray(array) {
 // Display answers as buttons
 function displayAns(data, que) {
     let distractorsArray = getDistractors(data);
+	console.log(distractorsArray);
 	let answers = [data.answer, ...distractorsArray];
 	answers = shuffleArray(answers);
 
