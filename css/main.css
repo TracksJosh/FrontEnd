@@ -6,3 +6,14 @@ button{
 input{
 	cursor:pointer;
 }
+
+.mainPageButton{
+	width: 85px;
+	height: 50px;
+    line-height: 50px;
+}
+.button-container {
+    display: grid;
+    gap: 10px;
+	place-items: center;
+}

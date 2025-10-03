@@ -160,18 +160,6 @@ async function selectAnswer(ans, id) {
     }
 }
 
-window.onload = async () => {
-    // load first question
-    let que = document.getElementById("question");
-    displayAns({
-        answer: {text: questions[0].answer, explanation: "Correct!!"},
-        distractors: questions[0].distractors,
-        id: questions[0].id,
-        question: questions[0].question,
-        leadin: questions[0].leadin
-    }, que);
-}
-
 async function inputAnswer(answer, data2)
 {
 	var ansBox = document.getElementById("answerBox"+data2.id);
@@ -416,7 +404,7 @@ async function asyncRegister(username, email, password)
         document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
 		await delay(5000);
         localStorage.setItem("username", username);
-		loadchecklist();
+		loadmain();
 	}
 	else if(data["status"] == "no")
 	{
@@ -457,7 +445,7 @@ async function login()
         document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
 		await delay(5000);
         localStorage.setItem("username", username);
-		loadchecklist();
+		loadmain();
 	}
 	else if(data["status"] == "incorrect_pass")
 	{
@@ -491,7 +479,7 @@ async function logout()
 		alert("You have successfully logged off.");
 		user = "";
 		document.cookie = "session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-		loadchecklist();
+		loadmain();
 	}
 	else if(data["status"] == "fail")
 	{
@@ -521,7 +509,7 @@ async function checkCookie()
 	{
 		user = data["username"];
 	}
-	loadchecklist();
+	loadmain();
 	
 }
 
@@ -535,7 +523,43 @@ function getCookie(name)
     return null;
 }
 
+async function loadmain()
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "main"})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+}
+
+function host()
+{
+	window.alert("The hosting function has not been implemented.");
+}
+
+async function loaduser()
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "user"})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+	const loginout = document.getElementById("loginout");
+	if(user.length == 0) loginout.innerHTML += `<button class="mainPageButton" onclick="loadlogin()">LOG IN</button>`;
+	else loginout.innerHTML += `<button class="mainPageButton" onclick="logout()">LOG OUT</button>`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    checkCookie();
+    loadmain();
 });
 
