@@ -513,6 +513,7 @@ async function checkCookie()
 	{
 		user = data["username"];
 	}
+	console.log(data);
 	loadmain();
 	
 }
