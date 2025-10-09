@@ -4,6 +4,7 @@ const heroku="https://quivia-7c117ffa0dd4.herokuapp.com";
 var user = "";
 var score = 0;
 var correct = 0;
+var game_id;
 
 function checkAll()
 {
@@ -53,12 +54,15 @@ async function submit()
 			headers: {
 					"Content-Type": "application/json"
 				},
-			body: JSON.stringify({ categories: trueChecks })
+			body: JSON.stringify({ categories: trueChecks, "username": user })
 		});
 		let data = await response.json();
 		webapp.innerHTML = data.received;
-		
-		let questionResponse = await fetch(heroku+"/question", {
+		game_id = data["game_id"];
+		console.log(game_id)
+		let param = encodeURIComponent(JSON.stringify({"game_id":game_id}))
+		console.log(param)
+		let questionResponse = await fetch(heroku+`/question?data=${param}`, {
 			method: "GET",
 			headers: {
 					"Content-Type": "application/json"
@@ -82,7 +86,7 @@ async function startGame()
 			headers: {
 				"Content-Type": "application/json"
 			},
-			body: JSON.stringify({"question": 1})
+			body: JSON.stringify({"question": 1,"game_id":game_id})
 	});
 	let data = await response.json();
 	var que = document.getElementById("question");
@@ -127,7 +131,7 @@ async function selectAnswer(ans, id) {
     let response = await fetch(heroku+"/ans", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({"answer": ans, "question": id})
+        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id})
     });
     let data = await response.json();
 
@@ -557,6 +561,26 @@ async function loaduser()
 	const loginout = document.getElementById("loginout");
 	if(user.length == 0) loginout.innerHTML += `<button class="mainPageButton" onclick="loadlogin()">LOG IN</button>`;
 	else loginout.innerHTML += `<button class="mainPageButton" onclick="logout()">LOG OUT</button>`;
+}
+
+function playchecklogin()
+{
+	if(user.length == 0)
+	{
+		showGuestAlert();
+	}
+	else loadchecklist();
+}
+
+function showGuestAlert() {
+  document.getElementById('customAlert').style.display = 'block';
+}
+
+function createGuest()
+{
+	var temp = Math.floor(Math.random() * (123456789 - 1 + 1) + 1);
+	user="Guest-"+temp;
+	loadchecklist();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
