@@ -584,6 +584,6 @@ function createGuest()
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadmain();
+   checkCookie();
 });
 
