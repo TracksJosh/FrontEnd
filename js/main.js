@@ -5,6 +5,10 @@ var user = "";
 var score = 0;
 var correct = 0;
 var game_id;
+var lengthoftime;
+var starttime;
+var endtime;
+var timestring;
 
 function checkAll()
 {
@@ -35,6 +39,13 @@ function uncheckAll()
 
 async function submit()
 {
+	const minutes = parseInt(document.getElementById("minutesInput").value);
+
+    if (isNaN(minutes) || minutes < 0) {
+		alert("Please enter a valid number of minutes.");
+        return;
+    }
+	lengthoftime = minutes * 60000;
 	checks = document.getElementsByTagName("input");
 	var webapp = document.getElementById("webapp");
 	trueChecks = [];
@@ -90,10 +101,11 @@ async function startGame()
 	});
 	let data = await response.json();
 	var que = document.getElementById("question");
-	que.innerHTML = `<h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
 	displayAns(data, que);
 	var sco = document.getElementById("score");
 	sco.innerHTML = "Score: "+score;
+	setCountdown();
 }
 
 function shuffleArray(array) {
@@ -137,7 +149,8 @@ async function selectAnswer(ans, id) {
 
     // Update question and lead-in
     let que = document.getElementById("question");
-    que.innerHTML = `<h5 id="score">Score: ${score}</h5>
+    que.innerHTML = `<div id="time">`+timestring+`</div>
+					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin">${data.leadin}</p>
                      <p>${data.question}</p>`;
 
@@ -160,6 +173,8 @@ async function selectAnswer(ans, id) {
         displayAns(data, que);
     } else {
         // End of quiz
+		starttime = Date.now();
+		endtime = Date.now();
         setTimeout(() => location.reload(), 5000);
     }
 }
@@ -179,7 +194,7 @@ async function inputAnswer(answer, data2)
 			body: JSON.stringify({"answer": answer, "question": id, "unformat": data2["unformatted"]})
 	});
 	let data = await response.json();
-	que.innerHTML = `<h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
 	if(data["id"] != "NaN")
 	{
 		if(data["status"] == "correct")
@@ -198,6 +213,8 @@ async function inputAnswer(answer, data2)
 	else
 	{
 		
+		starttime = Date.now();
+		endtime = Date.now();
 		await delay(5000);
 		location.reload();
 	}
@@ -582,6 +599,55 @@ function createGuest()
 	var temp = Math.floor(Math.random() * (123456789 - 1 + 1) + 1);
 	user="Guest-"+temp;
 	loadchecklist();
+}
+
+async function setCountdown()
+{
+	starttime = Date.now();
+	endtime = new Date(starttime+lengthoftime);
+	while(true)
+	{
+		var time = document.getElementById("time");
+		var currenttime = new Date();
+		var delta = endtime.getTime() - currenttime.getTime();
+		const hours = Math.floor(delta / 3600000);
+		const mins = Math.floor((delta % 3600000) / 60000);
+		const secs = Math.floor((delta % 60000) / 1000);
+		if (delta <= 0) {
+            time.innerHTML = `<p>00:00</p>`;
+			timeRanOut();
+            break;
+        }
+		if (hours > 0)
+		{
+			timestring = `<p>${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}</p>`;
+		}
+		else 
+		{
+			timestring = `<p>${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}</p>`;
+		}
+		time.innerHTML = timestring;
+		if(delta > 0)
+		{
+			await delay(100);
+		}
+	}
+}
+async function timeRanOut()
+{
+	let que = document.getElementById("question");
+    que.innerHTML = `<div id="time">`+timestring+`</div>
+					 <h5 id="score">Score: ${score}</h5>
+                     <p id="leadin"></p>
+                     <p>Sorry, you lost :(</p>`;
+
+
+    document.getElementById("score").innerHTML = "Score: " + score;
+
+    // Show next set of answers
+    istarttime = Date.now();
+	endtime = Date.now();
+    setTimeout(() => location.reload(), 5000);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
