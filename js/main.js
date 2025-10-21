@@ -73,7 +73,7 @@ async function submit()
 		console.log(game_id)
 		let param = encodeURIComponent(JSON.stringify({"game_id":game_id}))
 		console.log(param)
-		let questionResponse = await fetch(heroku+`/question?data=${param}`, {
+		let questionResponse = await fetch(heroku+`/card?data=${param}`, {
 			method: "GET",
 			headers: {
 					"Content-Type": "application/json"
@@ -82,12 +82,69 @@ async function submit()
 		let questData = await questionResponse.json();
 		webapp.innerHTML += `<div id=question align=center></div>`;
 		var que = document.getElementById("question");
-		que.innerHTML = `<button align=center onclick=startGame()>Start the Game!!!</button>`;
+		que.innerHTML = `<button align=center onclick=startCardGame(true)>Start the Game!!!</button>`;
 	}
 	else
 	{
 		window.alert("Select a category to play Quivia");
 	}
+}
+
+async function startCardGame(ti)
+{
+	let response = await fetch(heroku+"/startcard", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"game_id":game_id})
+	});
+	let data = await response.json();
+	card_1 = data["card_1"];
+	card_2 = data["card_2"];
+	card_3 = data["card_3"];
+	console.log(card_1);
+	console.log(card_2);
+	console.log(card_3);
+	var que = document.getElementById("question");
+	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card_1[0]+`" src=img/`+card_1[0]+`.png><br>`+card_1[1]+`<br>`+card_1[2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card_2[0]+`" src=img/`+card_2[0]+`.png><br>`+card_2[1]+`<br>`+card_2[2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card_3[0]+`" src=img/`+card_3[0]+`.png><br>`+card_3[1]+`<br>`+card_3[2]+`</p></tr></table></div>`;
+	if(ti) setCountdown();
+}
+
+async function selectCard(id)
+{
+	
+	question_id = 0;
+	switch(id)
+	{
+		case 0:
+			question_id = card_1[3];
+			break;
+		case 1:
+			question_id = card_2[3];
+			break;
+		case 2:
+			question_id = card_3[3];
+			break;
+	}
+	let response = await fetch(heroku+"/pickcard", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"card":id, "game_id":game_id, "question_id":question_id})
+	});
+	let data = await response.json();
+	console.log(data["question"]);
+	var que = document.getElementById("question");
+	if (typeof data.leadin === undefined || data.leadin === null) 
+	{
+		question.leadin = "";
+	}
+	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
+	displayAns(data, que);
+	var sco = document.getElementById("score");
+	sco.innerHTML = "Score: "+score;
 }
 
 async function startGame()
@@ -119,23 +176,23 @@ function shuffleArray(array) {
 // Display answers as buttons
 function displayAns(data, que) {
     let distractorsArray = getDistractors(data);
-	console.log(data.answer);
+	console.log(data["question"].correct_answer);
 	console.log(distractorsArray);
-	let answers = [data.answer, ...distractorsArray];
+	correct = {"text": data["question"].correct_answer, "explanation": "Correct!"};
+	let answers = [correct, ...distractorsArray];
 	answers = shuffleArray(answers);
+	console.log(answers);
 
 	answers.forEach(ans => {
 		let btn = document.createElement("button");
 		btn.innerHTML = ans.text;  // use the text property
-		btn.onclick = () => selectAnswer(ans, data.id, que);
+		btn.onclick = () => selectAnswer(ans, data["question"]._id);
 		que.appendChild(btn);
 	});
 }
 
 function getDistractors(data) {
-    if (Array.isArray(data.distractors)) return data.distractors;
-    if (Array.isArray(data.distractors?.distractors)) return data.distractors.distractors;
-    return [];
+    return data["question"].incorrect_answers;
 }
 
 async function selectAnswer(ans, id) {
@@ -146,15 +203,6 @@ async function selectAnswer(ans, id) {
         body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id})
     });
     let data = await response.json();
-
-    // Update question and lead-in
-    let que = document.getElementById("question");
-    que.innerHTML = `<div id="time">`+timestring+`</div>
-					 <h5 id="score">Score: ${score}</h5>
-                     <p id="leadin">${data.leadin}</p>
-                     <p>${data.question}</p>`;
-
-    // Update score
     if (data.status == "correct")
 	{
 		score += 10;
@@ -167,16 +215,7 @@ async function selectAnswer(ans, id) {
 	}
 
     document.getElementById("score").innerHTML = "Score: " + score;
-
-    // Show next set of answers
-    if (data.id != "NaN") {
-        displayAns(data, que);
-    } else {
-        // End of quiz
-		starttime = Date.now();
-		endtime = Date.now();
-        setTimeout(() => location.reload(), 5000);
-    }
+    startCardGame(false);
 }
 
 async function inputAnswer(answer, data2)
@@ -636,10 +675,20 @@ async function setCountdown()
 async function timeRanOut()
 {
 	let que = document.getElementById("question");
-    que.innerHTML = `<div id="time">`+timestring+`</div>
+    if(score <= 0)
+	{
+		que.innerHTML = `<div id="time">`+timestring+`</div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Sorry, you lost :(</p>`;
+	}
+	else
+	{
+		que.innerHTML = `<div id="time">`+timestring+`</div>
+					 <h5 id="score">Score: ${score}</h5>
+                     <p id="leadin"></p>
+                     <p>Congrats!! You win<br>YIPPEE!!</p>`;
+	}
 
 
     document.getElementById("score").innerHTML = "Score: " + score;

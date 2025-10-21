@@ -66,3 +66,33 @@ input{
 .custom-alert-btn:hover {
   background-color: #e5e5e5;
 }
+
+.card {
+	background-color: #CE4260;
+	transition: background 0.2s;
+	border-radius: 25px;
+	padding: 1px;
+    width: 400px;
+    height: 600px;
+	margin: 10px;
+	margin-top: 10px;
+	overflow-wrap: break-word;
+	display: inline-block;  
+	text-align: center;
+	vertical-align: top;  
+}
+
+.card:hover {
+  background-color: #D66260;
+  cursor:pointer;
+}
+
+.OpenTDB {
+	width: 60%;
+    height: 10%;
+}
+
+.QBReader {
+	width: 20%;
+    height: 18%;
+}
