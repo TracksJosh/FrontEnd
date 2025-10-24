@@ -1,6 +1,15 @@
 const delay = ms => new Promise(res => setTimeout(res, ms));
-const heroku="https://quivia-7c117ffa0dd4.herokuapp.com";
-//const heroku="http://localhost:8887";
+let heroku;
+
+if (window.location.hostname === "localhost") {
+    // Local development
+    heroku = "http://localhost:8887";
+} else {
+    // Online / production
+    heroku = "https://quivia-7c117ffa0dd4.herokuapp.com";
+}
+const protocol = heroku.startsWith("https") ? "wss" : "ws";
+let ws;
 var user = "";
 var score = 0;
 var correct = 0;
@@ -46,7 +55,7 @@ async function submit()
         return;
     }
 	lengthoftime = minutes * 60000;
-	checks = document.getElementsByTagName("input");
+	checks = document.querySelectorAll(`input[type="checkbox"]`);
 	var webapp = document.getElementById("webapp");
 	trueChecks = [];
 	for(var i=0; i<checks.length; i++) 
@@ -598,9 +607,18 @@ async function loadmain()
 	body.innerHTML = data["html"];
 }
 
-function host()
+async function host()
 {
-	window.alert("The hosting function has not been implemented.");
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "host", "username": user})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
 }
 
 async function loaduser()
@@ -699,7 +717,94 @@ async function timeRanOut()
     setTimeout(() => location.reload(), 5000);
 }
 
+async function joingame()
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "joingame"})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+}
+
+async function joinGame()
+{
+	const body = document.getElementById("body");
+	let code = document.getElementById("game_code").value;
+	console.log(code);
+	if(code.length == 6)
+	{
+		let response = await fetch(heroku+"/connectGame", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({"username": user, "game_code": code})
+		});
+		let data = await response.json();
+		if(data["status"] == "no")
+		{
+			document.getElementById('customAlert').style.display = 'block';
+		}
+		else
+		{
+			game_id = data["game_id"];
+			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+			console.log(ws)
+			loadlobby(data["catdisplay"], data["players"]);
+		}
+	}
+	else
+	{
+		document.getElementById('customAlert').style.display = 'block';
+	}
+}
+
+async function loadlobby(html, players)
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "lobby", "game_id": game_id})
+	});
+	let data = await response.json();
+	body.innerHTML = data["html"];
+	const catdisplay = document.getElementById("catdisplay");
+	catdisplay.innerHTML = html;
+	const player1 = document.getElementById("player1");
+	const player2 = document.getElementById("player2");
+	const player3 = document.getElementById("player3");
+	const player4 = document.getElementById("player4");
+	player1.innerHTML = players[0];
+	player2.innerHTML = players[1];
+	player3.innerHTML = players[2];
+	player4.innerHTML = players[3];
+	
+}
+
+
+
+function leaveGame()
+{
+	ws.close();
+	location.reload();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+   if (sessionStorage.getItem("reloaded") === "true") {
+	sessionStorage.removeItem("reloaded");
+   }
    checkCookie();
 });
 
+window.addEventListener("beforeunload", () => {
+  sessionStorage.setItem("reloaded", "true");
+  
+});
