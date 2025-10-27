@@ -18,6 +18,7 @@ var lengthoftime;
 var starttime;
 var endtime;
 var timestring;
+let lobbyHTML = null;
 let lobbyLoaded = false;
 let categoriesSet = false;
 
@@ -814,7 +815,9 @@ async function loadLobby(htmlCategories, gameCode, players) {
             document.getElementById("player4")
         ];
         players.forEach((player, index) => {
-            if (player && playerElements[index]) playerElements[index].textContent = player;
+            if (player && playerElements[index]) {
+                playerElements[index].textContent = player;
+            }
         });
     }
 }
@@ -949,7 +952,7 @@ function setupWebSocketHandlers() {
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
         if (data.type === "players_update") {
-            loadlobby(null, data.players); // only update players
+            loadlobby(null, null, data.players); // only update players
         }
     };
 
