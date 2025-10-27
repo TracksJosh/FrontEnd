@@ -786,29 +786,30 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-async function loadlobby(html, players) {
-    const body = document.getElementById("body");
+async function loadlobby(html, players, gameCode) {
+    const webapp = document.getElementById("webapp");
 
     if (!lobbyLoaded) {
         if (!lobbyHTMLPromise) {
-            lobbyHTMLPromise = fetch(heroku + "/load", {
+            lobbyHTMLPromise = fetch(`${heroku}/load`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ file: "lobby", game_id: game_id })
             }).then(res => res.json());
         }
-
         const data = await lobbyHTMLPromise;
-        body.innerHTML = data.html;
+        webapp.innerHTML = data.html;
         lobbyLoaded = true;
     }
 
-    if (html && !categoriesSet) {
+    if (html) {
         const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) {
-            catdisplay.innerHTML = html;
-            categoriesSet = true;
-        }
+        if (catdisplay) catdisplay.innerHTML = html;
+    }
+
+    if (gameCode) {
+        const codedisplay = document.getElementById("codedisplay");
+        if (codedisplay) codedisplay.textContent = gameCode;
     }
 
     if (players && players.length > 0) {
@@ -818,11 +819,8 @@ async function loadlobby(html, players) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
-
-        players.forEach((player, index) => {
-            if (player && playerElements[index]) {
-                playerElements[index].textContent = player;
-            }
+        players.forEach((player, i) => {
+            if (playerElements[i]) playerElements[i].textContent = player || "";
         });
     }
 }
