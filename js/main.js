@@ -950,7 +950,7 @@ function setupWebSocketHandlers() {
 		if (data.type === "host_disconnected") {
 			alert(data.message || "The host has disconnected. The lobby is closed.");
 			ws.close();
-			window.location.href = "/";
+			window.location.href = "/FrontEnd";
 		}
     };
 
