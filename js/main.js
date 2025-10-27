@@ -864,6 +864,7 @@ async function submitLobbyParams() {
         body: JSON.stringify({ categories: checks, username: user, lengthoftime: minutes })
     });
     const data = await response.json();
+	console.log("Server response from /test:", data);
     game_id = data.game_id;
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
