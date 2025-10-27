@@ -21,6 +21,7 @@ var timestring;
 let lobbyHTML = null;
 let lobbyLoaded = false;
 let categoriesSet = false;
+let heartbeatInterval;
 
 function checkAll()
 {
@@ -938,21 +939,27 @@ function handleWSMessage(event) {
 }
 
 function setupWebSocketHandlers() {
-    if (!ws) return; // exit if ws is not created yet
+    if (!ws) return;
 
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
         if (data.type === "players_update") {
-            loadlobby(null, null, data.players); // only update players
+            loadlobby(null, null, data.players);
         }
     };
 
     ws.onopen = function() {
         console.log("WebSocket connection established for game:", game_id);
+		heartbeatInterval = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: "ping" }));
+            }
+        }, 30000);
     };
 
     ws.onclose = function() {
         console.log("WebSocket closed");
+		clearInterval(heartbeatInterval);
     };
 
     ws.onerror = function(err) {
