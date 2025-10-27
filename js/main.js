@@ -806,20 +806,22 @@ async function loadlobby(catHTML, gameCode, players) {
 		console.log(codeDisplay);
     }
 
-    if (players && players.length > 0) {
-        const playerElements = [
-            document.getElementById("player1"),
-            document.getElementById("player2"),
-            document.getElementById("player3"),
-            document.getElementById("player4")
-        ];
+    const playerElements = [
+        document.getElementById("player1"),
+        document.getElementById("player2"),
+        document.getElementById("player3"),
+        document.getElementById("player4")
+    ];
+	
+	playerElements.forEach((element, index) => {
+        if (!element) return;
 
-        players.forEach((player, index) => {
-            if (player && playerElements[index]) {
-                playerElements[index].textContent = player;
-            }
-        });
-    }
+        if (players && players[index]) {
+            element.textContent = players[index];
+        } else {
+            element.textContent = "Waiting for player...";
+        }
+    });
 }
 
 async function loadlobbyHTML() {
