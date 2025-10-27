@@ -779,29 +779,31 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-async function loadlobby(html, players, gameCode = null) {
-    const body = document.getElementById("body");
+async function loadLobby(htmlCategories, gameCode, players) {
+    const webapp = document.getElementById("webapp");
 
     if (!lobbyLoaded) {
-        if (!lobbyHTMLPromise) {
-            lobbyHTMLPromise = fetch(heroku + "/load", {
+        if (!lobbyHTML) {
+            const res = await fetch(heroku + "/load", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ file: "lobby", game_id: game_id })
-            }).then(res => res.json());
+            });
+            const data = await res.json();
+            lobbyHTML = data.html;
         }
-
-        const data = await lobbyHTMLPromise;
-        body.innerHTML = data.html;
+        webapp.innerHTML = lobbyHTML;
         lobbyLoaded = true;
     }
 
-    if (html && !categoriesSet) {
+    if (htmlCategories) {
         const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) {
-            catdisplay.innerHTML = html;
-            categoriesSet = true;
-        }
+        if (catdisplay) catdisplay.innerHTML = htmlCategories;
+    }
+
+    if (gameCode) {
+        const codedisplay = document.getElementById("codedisplay");
+        if (codedisplay) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
     }
 
     if (players && players.length > 0) {
@@ -811,19 +813,9 @@ async function loadlobby(html, players, gameCode = null) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
-
         players.forEach((player, index) => {
-            if (player && playerElements[index]) {
-                playerElements[index].textContent = player;
-            }
+            if (player && playerElements[index]) playerElements[index].textContent = player;
         });
-    }
-
-    if (gameCode) {
-        const codedisplay = document.getElementById("codedisplay");
-        if (codedisplay) {
-            codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
-        }
     }
 }
 
