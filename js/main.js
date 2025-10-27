@@ -766,12 +766,12 @@ async function joinGame() {
 			
 			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 			console.log("WebSocket opened for game:", game_id);
-			await loadlobby(data.catdisplay, data.players, code);
-			
+			await loadlobby(data.catdisplay, data.players);
+
 			ws.onmessage = function(event) {
 				const data = JSON.parse(event.data);
-				if (msg.type === "players_update") {
-					loadlobby(null, msg.players);
+				if (data.type === "players_update") {
+					loadlobby(null, data.players); // updates players only
 				}
 			};
 
@@ -786,12 +786,12 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-async function loadlobby(html, players, gameCode) {
+async function loadlobby(html, players) {
     const webapp = document.getElementById("webapp");
 
     if (!lobbyLoaded) {
         if (!lobbyHTMLPromise) {
-            lobbyHTMLPromise = fetch(`${heroku}/load`, {
+            lobbyHTMLPromise = fetch(heroku + "/load", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ file: "lobby", game_id })
@@ -803,14 +803,17 @@ async function loadlobby(html, players, gameCode) {
         lobbyLoaded = true;
     }
 
-    if (html) {
+    if (html && !categoriesSet) {
         const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) catdisplay.innerHTML = html;
-    }
+        if (catdisplay) {
+            catdisplay.innerHTML = html;
+            categoriesSet = true;
+        }
 
-    if (gameCode) {
         const codedisplay = document.getElementById("codedisplay");
-        if (codedisplay) codedisplay.textContent = "Game Code: " + gameCode;
+        if (codedisplay && typeof game_code !== "undefined") {
+            codedisplay.innerHTML = `<strong>Game Code:</strong> ${game_code}`;
+        }
     }
 
     if (players && players.length > 0) {
@@ -820,8 +823,9 @@ async function loadlobby(html, players, gameCode) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
-        playerElements.forEach((el, i) => {
-            if (el) el.textContent = players[i] || "";
+
+        playerElements.forEach((el, index) => {
+            el.textContent = players[index] || "";
         });
     }
 }
@@ -894,7 +898,7 @@ async function createLobby()
 	ws.onmessage = function(event) {
 		const data = JSON.parse(event.data);
 		if (data.type === "players_update") {
-			loadlobby(null, data.players); // only updates players
+			loadlobby(null, data.players); // updates players only
 		}
 	};
 	getLobbyCode();
