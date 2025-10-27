@@ -766,7 +766,7 @@ async function joinGame() {
         game_id = data.game_id;
 
 
-        await loadlobby(data.catdisplay, data.players, true);
+        await loadlobby(data.catdisplay, data.players, data.game_id);
 
 
         ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
@@ -780,27 +780,31 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-async function loadlobby(html, players, forceReload = false) {
-    const webapp = document.getElementById("webapp");
+async function loadlobby(html, players, gameCode = null) {
+    const body = document.getElementById("body");
 
-    // Always reload HTML if the lobby hasn't been shown yet, or if forced
-    if (forceReload || !document.getElementById("lobby-container")) {
-        const response = await fetch(heroku + "/load", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file: "lobby", game_id })
-        });
-        const data = await response.json();
-        webapp.innerHTML = data.html;
+    if (!lobbyLoaded) {
+        if (!lobbyHTMLPromise) {
+            lobbyHTMLPromise = fetch(heroku + "/load", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ file: "lobby", game_id: game_id })
+            }).then(res => res.json());
+        }
+
+        const data = await lobbyHTMLPromise;
+        body.innerHTML = data.html;
+        lobbyLoaded = true;
     }
 
-    // Now fill categories
-    if (html) {
+    if (html && !categoriesSet) {
         const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) catdisplay.innerHTML = html;
+        if (catdisplay) {
+            catdisplay.innerHTML = html;
+            categoriesSet = true;
+        }
     }
 
-    // Update players
     if (players && players.length > 0) {
         const playerElements = [
             document.getElementById("player1"),
@@ -808,9 +812,19 @@ async function loadlobby(html, players, forceReload = false) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
-        players.forEach((player, i) => {
-            if (playerElements[i]) playerElements[i].textContent = player || "";
+
+        players.forEach((player, index) => {
+            if (player && playerElements[index]) {
+                playerElements[index].textContent = player;
+            }
         });
+    }
+
+    if (gameCode) {
+        const codedisplay = document.getElementById("codedisplay");
+        if (codedisplay) {
+            codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+        }
     }
 }
 
