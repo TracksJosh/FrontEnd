@@ -923,6 +923,22 @@ async function getLobbyCode() {
     }
 }
 
+function handleWSMessage(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "players_update") {
+        const playerElements = [
+            document.getElementById("player1"),
+            document.getElementById("player2"),
+            document.getElementById("player3"),
+            document.getElementById("player4")
+        ];
+        data.players.forEach((player, index) => {
+            if (playerElements[index]) playerElements[index].textContent = player;
+        });
+    }
+}
+
 function setupWebSocketHandlers() {
     if (!ws) return; // exit if ws is not created yet
 
