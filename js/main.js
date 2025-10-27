@@ -784,30 +784,36 @@ async function joinGame() {
 	}
 }
 
-async function loadlobby(html, players)
-{
-	
-	const body = document.getElementById("body");
-	let response = await fetch(heroku+"/load", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"file": "lobby", "game_id": game_id})
-	});
-	let data = await response.json();
-	body.innerHTML = data["html"];
-	const catdisplay = document.getElementById("catdisplay");
-	catdisplay.innerHTML = html;
-	const player1 = document.getElementById("player1");
-	const player2 = document.getElementById("player2");
-	const player3 = document.getElementById("player3");
-	const player4 = document.getElementById("player4");
-	player1.innerHTML = players[0];
-	player2.innerHTML = players[1];
-	player3.innerHTML = players[2];
-	player4.innerHTML = players[3];
-	
+async function loadlobby(html, players) {
+    const body = document.getElementById("body");
+
+    if (!document.getElementById("lobby-container")) {
+        let response = await fetch(heroku + "/load", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "file": "lobby", "game_id": game_id })
+        });
+        let data = await response.json();
+        body.innerHTML = data["html"];
+    }
+
+    if (html) {
+        const catdisplay = document.getElementById("catdisplay");
+        catdisplay.innerHTML = html;
+    }
+
+    const playerElements = [
+        document.getElementById("player1"),
+        document.getElementById("player2"),
+        document.getElementById("player3"),
+        document.getElementById("player4")
+    ];
+
+    players.forEach((player, index) => {
+        if (player && playerElements[index]) {
+            playerElements[index].innerHTML = player;
+        }
+    });
 }
 
 
