@@ -780,20 +780,40 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-function loadlobby(catHTML, gameCode, players) {
-    if (catHTML) document.getElementById("catdisplay").innerHTML = catHTML;
-    if (gameCode) document.getElementById("codedisplay").innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+async function loadlobby(catHTML, gameCode, players) {
+    const webapp = document.getElementById("webapp");
 
-    const playerElements = [
-        document.getElementById("player1"),
-        document.getElementById("player2"),
-        document.getElementById("player3"),
-        document.getElementById("player4")
-    ];
+    if (!lobbyLoaded) {
+        const response = await fetch(`${heroku}/load`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ file: "lobby", game_id })
+        });
+        const data = await response.json();
+        webapp.innerHTML = data.html;
+        lobbyLoaded = true;
+    }
 
-    if (players) {
-        players.forEach((player, i) => {
-            if (playerElements[i]) playerElements[i].textContent = player || "";
+    if (catHTML) {
+        const catDisplay = document.getElementById("catdisplay");
+        if (catDisplay) catDisplay.innerHTML = catHTML;
+    }
+    if (gameCode) {
+        const codeDisplay = document.getElementById("codedisplay");
+        if (codeDisplay) codeDisplay.textContent = `Game Code: ${gameCode}`;
+    }
+
+    if (players && players.length > 0) {
+        const playerElements = [
+            document.getElementById("player1"),
+            document.getElementById("player2"),
+            document.getElementById("player3"),
+            document.getElementById("player4")
+        ];
+        players.forEach((player, index) => {
+            if (player && playerElements[index]) {
+                playerElements[index].textContent = player;
+            }
         });
     }
 }
@@ -853,7 +873,7 @@ async function submitLobbyParams() {
     document.getElementById("catdisplay").innerHTML = catHTML;
     document.getElementById("codedisplay").textContent = `Game Code: ${gameCode}`;
 
-    await loadLobby(null, null, [user]);
+    await loadlobby(null, null, [user]);
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
     setupWebSocketHandlers();
