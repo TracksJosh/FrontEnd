@@ -787,14 +787,15 @@ async function joinGame() {
 async function loadlobby(html, players) {
     const body = document.getElementById("body");
 
+
     if (!document.getElementById("lobby-container")) {
         let response = await fetch(heroku + "/load", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "file": "lobby", "game_id": game_id })
+            body: JSON.stringify({ file: "lobby", game_id: game_id })
         });
         let data = await response.json();
-        body.innerHTML = data["html"];
+        body.innerHTML = data.html;
     }
 
     if (html) {
