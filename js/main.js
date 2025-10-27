@@ -773,6 +773,7 @@ async function joinGame() {
         setupWebSocketHandlers();
 
         await loadlobby(catHTML, gameCode, Object.values(data.players));
+		await getLobbyCode();
     } catch (err) {
         console.error("Error joining game:", err);
         document.getElementById('customAlert').style.display = 'block';
