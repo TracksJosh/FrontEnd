@@ -867,12 +867,12 @@ async function createLobby(catHTML, gameCode, players) {
     const webapp = document.getElementById("webapp");
 
     if (!document.getElementById("lobby-container")) {
-        let response = await fetch(heroku + "/load", {
+        const response = await fetch(heroku + "/load", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ file: "lobby", game_id })
         });
-        let data = await response.json();
+        const data = await response.json();
         webapp.innerHTML = data.html;
     }
 
@@ -883,9 +883,6 @@ async function createLobby(catHTML, gameCode, players) {
     if (codedisplay) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
 
     loadlobby(null, players);
-
-    ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
-    setupWebSocketHandlers();
 }
 
 async function getLobbyCode() {
