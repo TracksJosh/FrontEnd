@@ -827,7 +827,6 @@ async function loadlobby(html, players) {
     }
 }
 
-
 async function submitLobbyParams()
 {
 	const minutes = parseInt(document.getElementById("minutesInput").value);
