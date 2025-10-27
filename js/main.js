@@ -884,42 +884,33 @@ async function submitLobbyParams() {
         const catHTML = data.received;
 
 
-        await createLobby(catHTML);
+        await createLobby(data.catdisplay, data.code, [user]);;
     } catch (err) {
         console.error("Error submitting lobby params:", err);
     }
 }
 
-async function createLobby() {
+async function createLobby(catHTML, gameCode, players) {
     const webapp = document.getElementById("webapp");
 
-    // Load lobby HTML from server
+    
     let response = await fetch(heroku + "/load", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file: "lobby", game_id: game_id })
     });
     let data = await response.json();
-
-    // Replace entire content (no +=) to avoid duplicates
     webapp.innerHTML = data.html;
 
-    // Set up WebSocket AFTER DOM exists
+    
+    document.getElementById("catdisplay").innerHTML = catHTML;
+    document.getElementById("codedisplay").innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+
+    
+    loadlobby(null, players, gameCode); 
+
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        if (data.type === "players_update") {
-            loadlobby(null, data.players, null); // only update players
-        }
-    };
-
-    // Display host’s player (already in DB)
-    const game_data = await fetchGameData(game_id); // fetch current game state
-    loadlobby(data.catdisplay, game_data.players, game_data.code);
-
-    // Display game code
-    const codedisplay = document.getElementById("codedisplay");
-    codedisplay.innerHTML = `<h3>Game Code: ${game_data.code}</h3>`;
+    setupWebSocketHandlers();
 }
 
 async function getLobbyCode() {
