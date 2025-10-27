@@ -870,7 +870,8 @@ async function submitLobbyParams() {
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
     setupWebSocketHandlers();
 
-    await loadlobby(data.catdisplay, data.code, [user]);
+    await loadlobby(data.received, null, [user]);
+	await getLobbyCode();
 }
 
 async function createLobby(catHTML, gameCode, players) {
