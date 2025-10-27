@@ -771,7 +771,7 @@ async function joinGame() {
         ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
         setupWebSocketHandlers();
 
-        await loadLobby(catHTML, gameCode, Object.values(data.players));
+        await loadlobby(catHTML, gameCode, Object.values(data.players));
     } catch (err) {
         console.error("Error joining game:", err);
         document.getElementById('customAlert').style.display = 'block';
@@ -798,7 +798,7 @@ function loadlobby(catHTML, gameCode, players) {
     }
 }
 
-async function loadLobbyHTML() {
+async function loadlobbyHTML() {
     if (lobbyLoaded) return;
 
     const webapp = document.getElementById("webapp");
@@ -813,7 +813,7 @@ async function loadLobbyHTML() {
 }
 
 async function populateLobby(catHTML, gameCode, players) {
-    await loadLobbyHTML();
+    await loadlobbyHTML();
 
     const catdisplay = document.getElementById("catdisplay");
     const codedisplay = document.getElementById("codedisplay");
@@ -856,7 +856,7 @@ async function submitLobbyParams() {
         ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
         setupWebSocketHandlers();
 
-        await loadLobby(catHTML, gameCode, [user]);
+        await loadlobby(catHTML, gameCode, [user]);
     } catch (err) {
         console.error("Error hosting lobby:", err);
     }
@@ -881,7 +881,7 @@ async function createLobby(catHTML, gameCode, players) {
     const codedisplay = document.getElementById("codedisplay");
     if (codedisplay && gameCode) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
 
-    loadLobby(null, null, players);
+    loadlobby(null, null, players);
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
     setupWebSocketHandlers();
