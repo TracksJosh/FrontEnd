@@ -19,6 +19,7 @@ var starttime;
 var endtime;
 var timestring;
 let lobbyLoaded = false;
+let categoriesSet = false;
 
 function checkAll()
 {
@@ -767,11 +768,9 @@ async function joinGame() {
 			console.log("WebSocket opened for game:", game_id);
 			
 			ws.onmessage = function(event) {
-				let data = JSON.parse(event.data);
-			
+				const data = JSON.parse(event.data);
 				if (data.type === "players_update") {
-					console.log("Updated players:", data.players);
-					loadlobby(null, data.players); // pass updated list to lobby UI
+					loadlobby(null, data.players); // only updates players
 				}
 			};
 
@@ -799,19 +798,22 @@ async function loadlobby(html, players) {
         lobbyLoaded = true;
     }
 
-    if (html) {
+    if (html && !categoriesSet) {
         const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) catdisplay.innerHTML = html;
+        if (catdisplay) {
+            catdisplay.innerHTML = html;
+            categoriesSet = true;
+        }
     }
 
-    const playerElements = [
-        document.getElementById("player1"),
-        document.getElementById("player2"),
-        document.getElementById("player3"),
-        document.getElementById("player4")
-    ];
-
     if (players && players.length > 0) {
+        const playerElements = [
+            document.getElementById("player1"),
+            document.getElementById("player2"),
+            document.getElementById("player3"),
+            document.getElementById("player4")
+        ];
+
         players.forEach((player, index) => {
             if (player && playerElements[index]) {
                 playerElements[index].textContent = player;
@@ -887,11 +889,9 @@ async function createLobby()
 	ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 	console.log(ws);
 	ws.onmessage = function(event) {
-		let data = JSON.parse(event.data);
-	
+		const data = JSON.parse(event.data);
 		if (data.type === "players_update") {
-			console.log("Updated players:", data.players);
-			loadlobby(null, data.players); // pass updated list to lobby UI
+			loadlobby(null, data.players); // only updates players
 		}
 	};
 	getLobbyCode();
