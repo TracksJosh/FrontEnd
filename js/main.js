@@ -729,18 +729,42 @@ async function timeRanOut()
     setTimeout(() => location.reload(), 5000);
 }
 
-async function joingame()
-{
-	const webapp = document.getElementById("webapp");
-	let response = await fetch(heroku+"/load", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"file": "joingame"})
-	});
-	let data = await response.json();
-	webapp.innerHTML = data["html"];
+async function joinGame() {
+    const code = document.getElementById("game_code").value.trim();
+    if (code.length !== 6) {
+        document.getElementById('customAlert').style.display = 'block';
+        return;
+    }
+
+    try {
+        let response = await fetch(heroku + "/connectGame", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, game_code: code })
+        });
+
+        let data = await response.json();
+        if (data.status === "no") {
+            document.getElementById('customAlert').style.display = 'block';
+            return;
+        }
+
+        game_id = data.game_id;
+        const catHTML = data.catdisplay || "";
+        const gameCode = code; // actual game code
+        const players = data.players;
+
+        // Connect websocket
+        ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+        setupWebSocketHandlers();
+
+        // Populate the lobby
+        await populateLobby(catHTML, gameCode, players);
+
+    } catch (err) {
+        console.error("Error connecting to game:", err);
+        document.getElementById('customAlert').style.display = 'block';
+    }
 }
 
 async function joinGame() {
@@ -828,6 +852,32 @@ async function loadlobby(html, players, gameCode = null) {
     }
 }
 
+async function loadLobbyHTML() {
+    if (!lobbyHTMLPromise) {
+        lobbyHTMLPromise = fetch(heroku + "/load", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ file: "lobby", game_id })
+        }).then(res => res.json());
+    }
+    const data = await lobbyHTMLPromise;
+    if (!lobbyLoaded) {
+        document.getElementById("webapp").innerHTML = data.html;
+        lobbyLoaded = true;
+    }
+}
+
+async function populateLobby(catHTML, gameCode, players) {
+    await loadLobbyHTML();
+
+    const catdisplay = document.getElementById("catdisplay");
+    const codedisplay = document.getElementById("codedisplay");
+
+    if (catdisplay) catdisplay.innerHTML = catHTML;
+    if (codedisplay) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+
+    loadlobby(null, players); // update only players
+}
 
 
 async function submitLobbyParams() {
@@ -838,7 +888,6 @@ async function submitLobbyParams() {
     }
 
     lengthoftime = minutes * 60000;
-
     const checks = document.querySelectorAll('input[type="checkbox"]');
     const trueChecks = Array.from(checks).filter(ch => ch.checked).map(ch => ch.id);
     if (trueChecks.length === 0) {
@@ -855,9 +904,14 @@ async function submitLobbyParams() {
         let data = await response.json();
         game_id = data.game_id;
 
-        const catHTML = data.received;
-		const gameCode = data.game_code;
-		await createLobby(data.catdisplay, data.game_code, [user]);
+        const catHTML = data.catdisplay || "";
+        const gameCode = data.code;
+
+        ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+        setupWebSocketHandlers();
+
+        await populateLobby(catHTML, gameCode, [user]);
+
     } catch (err) {
         console.error("Error submitting lobby params:", err);
     }
@@ -923,25 +977,12 @@ function handleWSMessage(event) {
 }
 
 function setupWebSocketHandlers() {
-    if (!ws) return; // exit if ws is not created yet
-
+    if (!ws) return;
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
         if (data.type === "players_update") {
-            loadlobby(null, data.players); // only update players
+            loadlobby(null, data.players); // update only players
         }
-    };
-
-    ws.onopen = function() {
-        console.log("WebSocket connection established for game:", game_id);
-    };
-
-    ws.onclose = function() {
-        console.log("WebSocket closed");
-    };
-
-    ws.onerror = function(err) {
-        console.error("WebSocket error:", err);
     };
 }
 
