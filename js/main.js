@@ -272,7 +272,7 @@ async function inputAnswer(answer, data2)
 
 async function loadchecklist()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -281,7 +281,7 @@ async function loadchecklist()
 			body: JSON.stringify({"file": "checklist"})
 	});
 	let data = await response.json();
-	body.innerHTML = data["html"];
+	webapp.innerHTML = data["html"];
 	const logged = document.getElementById("logged");
 	console.log(logged);
 	if(user.length == 0) logged.innerHTML = `<button onclick=loadlogin()>Login</button><button align=right onclick=loadsignup()>Sign Up</button>`;
@@ -291,7 +291,7 @@ async function loadchecklist()
 
 async function loadsignup()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -300,12 +300,12 @@ async function loadsignup()
 			body: JSON.stringify({"file": "signup"})
 	});
 	let data = await response.json();
-	body.innerHTML = data["html"];
+	webapp.innerHTML = data["html"];
 }
 
 async function loadlogin()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -314,7 +314,7 @@ async function loadlogin()
 			body: JSON.stringify({"file": "login"})
 	});
 	let data = await response.json();
-	body.innerHTML = data["html"];
+	webapp.innerHTML = data["html"];
 }
 
 function signup()
@@ -467,8 +467,8 @@ async function asyncRegister(username, email, password)
 	{
 		
 		//alert("Your account has been successfully registered.");
-		const body = document.getElementById("body");
-		body.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>Your account has been successfully registered!! Logging in now.</h3>`;
+		const webapp = document.getElementById("webapp");
+		webapp.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>Your account has been successfully registered!! Logging in now.</h3>`;
 		user = username;
 		const expires = new Date();
         expires.setDate(expires.getDate() + 1);
@@ -508,8 +508,8 @@ async function login()
 	if(data["status"] == "success")
 	{
 		//alert("You have successfully logged on.");
-		const body = document.getElementById("body");
-		body.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>You have successfully logged in!!</h3>`;
+		const webapp = document.getElementById("webapp");
+		webapp.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>You have successfully logged in!!</h3>`;
 		user = username;
 		const expires = new Date();
         expires.setDate(expires.getDate() + 1);
@@ -597,7 +597,7 @@ function getCookie(name)
 
 async function loadmain()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -606,7 +606,7 @@ async function loadmain()
 			body: JSON.stringify({"file": "main"})
 	});
 	let data = await response.json();
-	body.innerHTML = data["html"];
+	webapp.innerHTML = data["html"];
 }
 
 async function host()
@@ -617,7 +617,7 @@ async function host()
 	}
 	else
 	{
-		const body = document.getElementById("body");
+		const webapp = document.getElementById("webapp");
 		let response = await fetch(heroku+"/load", {
 				method: "POST",
 				headers: {
@@ -626,13 +626,13 @@ async function host()
 				body: JSON.stringify({"file": "host", "username": user})
 		});
 		let data = await response.json();
-		body.innerHTML = data["html"];
+		webapp.innerHTML = data["html"];
 	}
 }
 
 async function loaduser()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -641,7 +641,7 @@ async function loaduser()
 			body: JSON.stringify({"file": "user"})
 	});
 	let data = await response.json();
-	body.innerHTML = data["html"];
+	webapp.innerHTML = data["html"];
 	const loginout = document.getElementById("loginout");
 	if(user.length == 0) loginout.innerHTML += `<button class="mainPageButton" onclick="loadlogin()">LOG IN</button>`;
 	else loginout.innerHTML += `<button class="mainPageButton" onclick="logout()">LOG OUT</button>`;
@@ -731,7 +731,7 @@ async function timeRanOut()
 
 async function joingame()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -740,7 +740,7 @@ async function joingame()
 			body: JSON.stringify({"file": "joingame"})
 	});
 	let data = await response.json();
-	body.innerHTML = data["html"];
+	webapp.innerHTML = data["html"];
 }
 
 async function joinGame() {
@@ -878,7 +878,7 @@ async function submitLobbyParams()
 
 async function createLobby()
 {
-	const body = document.getElementById("body");
+	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
 			headers: {
@@ -887,7 +887,7 @@ async function createLobby()
 			body: JSON.stringify({"file": "lobby", "game_id": game_id})
 	});
 	let data = await response.json();
-	body.innerHTML += data["html"];
+	webapp.innerHTML += data["html"];
 	const player1 = document.getElementById("player1");
 	ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 	console.log(ws);
