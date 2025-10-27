@@ -880,28 +880,34 @@ async function submitLobbyParams()
 	}
 }
 
-async function createLobby()
-{
-	const webapp = document.getElementById("webapp");
-	let response = await fetch(heroku+"/load", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"file": "lobby", "game_id": game_id})
-	});
-	let data = await response.json();
-	webapp.innerHTML += data["html"];
-	const player1 = document.getElementById("player1");
-	ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
-	console.log(ws);
-	ws.onmessage = function(event) {
-		const data = JSON.parse(event.data);
-		if (data.type === "players_update") {
-			loadlobby(null, data.players); // updates players only
-		}
-	};
-	getLobbyCode();
+async function createLobby() {
+    try {
+        let response = await fetch(heroku + "/load", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ file: "lobby", game_id: game_id })
+        });
+
+        let data = await response.json();
+
+       
+        await loadlobby(data.html, [user]);
+
+        
+        ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+        console.log("WebSocket opened for host:", ws);
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === "players_update") {
+                loadlobby(null, data.players);
+            }
+        };
+
+        await getLobbyCode();
+    } catch (err) {
+        console.error("Error creating lobby:", err);
+    }
 }
 
 async function getLobbyCode()
