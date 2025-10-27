@@ -766,12 +766,12 @@ async function joinGame() {
 			
 			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 			console.log("WebSocket opened for game:", game_id);
-			await loadlobby(data.catdisplay, data.players);
+			await loadlobby(data.catdisplay, data.players, code);
 			
 			ws.onmessage = function(event) {
 				const data = JSON.parse(event.data);
-				if (data.type === "players_update") {
-					loadlobby(null, data.players); // only updates players
+				if (msg.type === "players_update") {
+					loadlobby(null, msg.players);
 				}
 			};
 
@@ -794,9 +794,10 @@ async function loadlobby(html, players, gameCode) {
             lobbyHTMLPromise = fetch(`${heroku}/load`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ file: "lobby", game_id: game_id })
+                body: JSON.stringify({ file: "lobby", game_id })
             }).then(res => res.json());
         }
+
         const data = await lobbyHTMLPromise;
         webapp.innerHTML = data.html;
         lobbyLoaded = true;
@@ -809,7 +810,7 @@ async function loadlobby(html, players, gameCode) {
 
     if (gameCode) {
         const codedisplay = document.getElementById("codedisplay");
-        if (codedisplay) codedisplay.textContent = gameCode;
+        if (codedisplay) codedisplay.textContent = "Game Code: " + gameCode;
     }
 
     if (players && players.length > 0) {
@@ -819,8 +820,8 @@ async function loadlobby(html, players, gameCode) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
-        players.forEach((player, i) => {
-            if (playerElements[i]) playerElements[i].textContent = player || "";
+        playerElements.forEach((el, i) => {
+            if (el) el.textContent = players[i] || "";
         });
     }
 }
