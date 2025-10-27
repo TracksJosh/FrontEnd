@@ -798,9 +798,10 @@ async function loadlobby(catHTML, gameCode, players) {
         const catDisplay = document.getElementById("catdisplay");
         if (catDisplay) catDisplay.innerHTML = catHTML;
     }
+
     if (gameCode) {
         const codeDisplay = document.getElementById("codedisplay");
-        if (codeDisplay) codeDisplay.textContent = `Game Code: ${gameCode}`;
+        if (codeDisplay) codeDisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
     }
 
     if (players && players.length > 0) {
@@ -810,6 +811,7 @@ async function loadlobby(catHTML, gameCode, players) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
+
         players.forEach((player, index) => {
             if (player && playerElements[index]) {
                 playerElements[index].textContent = player;
