@@ -801,6 +801,29 @@ async function loadlobby(html, players)
 	
 }
 
+async function loadlobby(players)
+{
+	const player1 = document.getElementById("player1");
+	const player2 = document.getElementById("player2");
+	const player3 = document.getElementById("player3");
+	const player4 = document.getElementById("player4");
+	player1.innerHTML = players[0];
+	player2.innerHTML = players[1];
+	player3.innerHTML = players[2];
+	player4.innerHTML = players[3];
+	
+}
+
+ws.onmessage = function(event) {
+    let data = JSON.parse(event.data);
+
+    if (data.type === "players_update") {
+        console.log("Updated players:", data.players);
+        loadlobby(data.players); // pass updated list to lobby UI
+    }
+};
+
+
 async function submitLobbyParams()
 {
 	const minutes = parseInt(document.getElementById("minutesInput").value);
