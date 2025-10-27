@@ -766,6 +766,7 @@ async function joinGame() {
 			
 			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 			console.log("WebSocket opened for game:", game_id);
+			await loadlobby(data.catdisplay, data.players);
 			
 			ws.onmessage = function(event) {
 				const data = JSON.parse(event.data);
@@ -774,7 +775,6 @@ async function joinGame() {
 				}
 			};
 
-			loadlobby(data.catdisplay, data.players);
 		} catch (err) {
 			console.error("Error connecting to game:", err);
 			document.getElementById('customAlert').style.display = 'block';
