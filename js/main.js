@@ -947,6 +947,11 @@ function setupWebSocketHandlers() {
         if (data.type === "players_update") {
             loadlobby(null, null, data.players);
         }
+		if (data.type === "host_disconnected") {
+			alert(data.message || "The host has disconnected. The lobby is closed.");
+			ws.close();
+			window.location.href = "/";
+		}
     };
 
     ws.onopen = function() {
@@ -956,6 +961,7 @@ function setupWebSocketHandlers() {
                 ws.send(JSON.stringify({ type: "ping" }));
             }
         }, 30000);
+		
     };
 
     ws.onclose = function() {
