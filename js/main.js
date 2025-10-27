@@ -795,6 +795,15 @@ function loadLobby(catHTML, gameCode, players) {
             }
         });
     }
+	
+	if (catHTML) {
+        const catdisplay = document.getElementById("catdisplay");
+        if (catdisplay) catdisplay.innerHTML = catHTML;
+    }
+    if (gameCode) {
+        const codedisplay = document.getElementById("codedisplay");
+        if (codedisplay) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+    }
 }
 
 async function loadLobbyHTML() {
