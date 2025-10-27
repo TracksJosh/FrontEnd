@@ -860,40 +860,37 @@ async function submitLobbyParams() {
 }
 
 async function createLobby() {
-    await getLobbyCode();
-
-    let catHTML = `
-        <h1 align='center'>Here are your categories:</h1>
-        <h3 align='center'>QBReader Categories: ${trueChecks.filter(c => c.includes("qbreader")).join(", ")}</h3>
-        <h3 align='center'>OpenTDB Categories: ${trueChecks.filter(c => c.includes("opentdb")).join(", ")}</h3>
-    `;
-
-
     await loadlobby(catHTML, [user], true);
 
+    await getLobbyCode();
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === "players_update") {
-            loadlobby(null, data.players); // update only players
+            loadlobby(null, data.players);
         }
     };
 }
 
-async function getLobbyCode()
-{
-	const codedisplay = document.getElementById("codedisplay");
-	let response = await fetch(heroku+"/getcode", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"game_id": game_id})
-	});
-	let data = await response.json();
-	codedisplay.innerHTML = `<h3>Game Code: `+data["code"]+`</h3>`;
-	
+async function getLobbyCode() {
+    const codedisplay = document.getElementById("codedisplay");
+    if (!codedisplay) {
+        console.error("Lobby HTML not loaded yet. Cannot set game code.");
+        return;
+    }
+
+    try {
+        let response = await fetch(heroku + "/getcode", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ game_id })
+        });
+        let data = await response.json();
+        codedisplay.innerHTML = `<h3>Game Code: ${data.code}</h3>`;
+    } catch (err) {
+        console.error("Error fetching game code:", err);
+    }
 }
 
 function leaveGame()
