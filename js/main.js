@@ -784,16 +784,21 @@ async function joinGame() {
 	}
 }
 
+let lobbyHTMLPromise = null;
+
 async function loadlobby(html, players) {
     const body = document.getElementById("body");
 
     if (!lobbyLoaded) {
-        let response = await fetch(heroku + "/load", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file: "lobby", game_id: game_id })
-        });
-        let data = await response.json();
+        if (!lobbyHTMLPromise) {
+            lobbyHTMLPromise = fetch(heroku + "/load", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ file: "lobby", game_id: game_id })
+            }).then(res => res.json());
+        }
+
+        const data = await lobbyHTMLPromise;
         body.innerHTML = data.html;
         lobbyLoaded = true;
     }
