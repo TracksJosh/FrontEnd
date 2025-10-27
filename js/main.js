@@ -764,6 +764,15 @@ async function joinGame() {
 			
 			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 			console.log("WebSocket opened for game:", game_id);
+			
+			ws.onmessage = function(event) {
+				let data = JSON.parse(event.data);
+			
+				if (data.type === "players_update") {
+					console.log("Updated players:", data.players);
+					loadlobby(data.players); // pass updated list to lobby UI
+				}
+			};
 
 			loadlobby(data.catdisplay, data.players);
 		} catch (err) {
@@ -888,8 +897,15 @@ async function createLobby()
 	body.innerHTML += data["html"];
 	const player1 = document.getElementById("player1");
 	ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
-	console.log(ws)
-	player1.innerHTML = user;
+	console.log(ws);
+	ws.onmessage = function(event) {
+		let data = JSON.parse(event.data);
+	
+		if (data.type === "players_update") {
+			console.log("Updated players:", data.players);
+			loadlobby(data.players); // pass updated list to lobby UI
+		}
+	};
 	getLobbyCode();
 }
 
