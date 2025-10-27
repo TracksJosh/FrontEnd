@@ -821,56 +821,65 @@ async function loadlobby(html, players, forceReload = false) {
 
 async function submitLobbyParams() {
     const minutes = parseInt(document.getElementById("minutesInput").value);
-
     if (isNaN(minutes) || minutes < 0) {
         alert("Please enter a valid number of minutes.");
         return;
     }
 
-    const checks = document.querySelectorAll('input[type="checkbox"]:checked');
-    const trueChecks = Array.from(checks).map(c => c.id);
+    lengthoftime = minutes * 60000;
 
+    const checks = document.querySelectorAll('input[type="checkbox"]');
+    const trueChecks = Array.from(checks).filter(ch => ch.checked).map(ch => ch.id);
     if (trueChecks.length === 0) {
         alert("Select a category to play Quivia");
         return;
     }
 
     try {
-        const response = await fetch(heroku + "/test", {
+        let response = await fetch(heroku + "/test", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                categories: trueChecks,
-                username: user,
-                lengthoftime: minutes
-            })
+            body: JSON.stringify({ categories: trueChecks, username: user, lengthoftime: minutes })
         });
-
-        const data = await response.json();
+        let data = await response.json();
         game_id = data.game_id;
 
-        const param = encodeURIComponent(JSON.stringify({ game_id }));
-        await fetch(heroku + `/card?data=${param}`);
 
-        await createLobby();
+        const catHTML = data.received;
 
+
+        await createLobby(catHTML);
     } catch (err) {
         console.error("Error submitting lobby params:", err);
     }
 }
 
-async function createLobby() {
-    await loadlobby(catHTML, [user], true);
+async function createLobby(catHTML) {
+    const body = document.getElementById("body");
 
-    await getLobbyCode();
+    let response = await fetch(heroku + "/load", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: "lobby", game_id })
+    });
+    let data = await response.json();
+
+    if (!document.getElementById("lobby-container")) {
+        body.innerHTML = data.html;
+    }
+
+    const catdisplay = document.getElementById("catdisplay");
+    if (catdisplay) catdisplay.innerHTML = catHTML;
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
     ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === "players_update") {
-            loadlobby(null, data.players);
+        const msg = JSON.parse(event.data);
+        if (msg.type === "players_update") {
+            loadlobby(null, msg.players);
         }
     };
+
+    await getLobbyCode();
 }
 
 async function getLobbyCode() {
