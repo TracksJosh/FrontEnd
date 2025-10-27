@@ -18,6 +18,7 @@ var lengthoftime;
 var starttime;
 var endtime;
 var timestring;
+let lobbyLoaded = false;
 
 function checkAll()
 {
@@ -787,8 +788,7 @@ async function joinGame() {
 async function loadlobby(html, players) {
     const body = document.getElementById("body");
 
-
-    if (!document.getElementById("lobby-container")) {
+    if (!lobbyLoaded) {
         let response = await fetch(heroku + "/load", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -796,11 +796,12 @@ async function loadlobby(html, players) {
         });
         let data = await response.json();
         body.innerHTML = data.html;
+        lobbyLoaded = true;
     }
 
     if (html) {
         const catdisplay = document.getElementById("catdisplay");
-        catdisplay.innerHTML = html;
+        if (catdisplay) catdisplay.innerHTML = html;
     }
 
     const playerElements = [
@@ -810,11 +811,13 @@ async function loadlobby(html, players) {
         document.getElementById("player4")
     ];
 
-    players.forEach((player, index) => {
-        if (player && playerElements[index]) {
-            playerElements[index].innerHTML = player;
-        }
-    });
+    if (players && players.length > 0) {
+        players.forEach((player, index) => {
+            if (player && playerElements[index]) {
+                playerElements[index].textContent = player;
+            }
+        });
+    }
 }
 
 
