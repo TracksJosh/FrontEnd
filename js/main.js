@@ -787,32 +787,10 @@ async function joinGame() {
 let lobbyHTMLPromise = null;
 
 async function loadlobby(html, players) {
-    const webapp = document.getElementById("webapp");
-
-    if (!lobbyLoaded) {
-        if (!lobbyHTMLPromise) {
-            lobbyHTMLPromise = fetch(heroku + "/load", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ file: "lobby", game_id })
-            }).then(res => res.json());
-        }
-
-        const data = await lobbyHTMLPromise;
-        webapp.innerHTML = data.html;
-        lobbyLoaded = true;
-    }
-
-    if (html && !categoriesSet) {
+    if (html) {
         const catdisplay = document.getElementById("catdisplay");
         if (catdisplay) {
             catdisplay.innerHTML = html;
-            categoriesSet = true;
-        }
-
-        const codedisplay = document.getElementById("codedisplay");
-        if (codedisplay && typeof game_code !== "undefined") {
-            codedisplay.innerHTML = `<strong>Game Code:</strong> ${game_code}`;
         }
     }
 
@@ -823,9 +801,8 @@ async function loadlobby(html, players) {
             document.getElementById("player3"),
             document.getElementById("player4")
         ];
-
-        playerElements.forEach((el, index) => {
-            el.textContent = players[index] || "";
+        players.forEach((p, i) => {
+            if (playerElements[i]) playerElements[i].textContent = p || "";
         });
     }
 }
@@ -871,31 +848,41 @@ async function submitLobbyParams() {
 }
 
 async function createLobby() {
-    try {
-        const response = await fetch(heroku + "/load", {
+    if (lobbyLoaded) {
+        console.warn("Lobby already loaded — skipping reload.");
+        return;
+    }
+
+    const body = document.getElementById("body");
+
+    // Only fetch the HTML once
+    if (!lobbyHTMLPromise) {
+        lobbyHTMLPromise = fetch(heroku + "/load", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file: "lobby", game_id: game_id })
-        });
-
-        const data = await response.json();
-
-        await loadlobby(data.html, [user]);
-
-        ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
-        console.log("WebSocket opened for host:", ws);
-
-        ws.onmessage = function(event) {
-            const msg = JSON.parse(event.data);
-            if (msg.type === "players_update") {
-                loadlobby(null, msg.players);
-            }
-        };
-
-        await getLobbyCode();
-    } catch (err) {
-        console.error("Error creating lobby:", err);
+            body: JSON.stringify({ file: "lobby", game_id })
+        }).then(res => res.json());
     }
+
+    const data = await lobbyHTMLPromise;
+
+    // Replace full body with new HTML once
+    body.innerHTML = data.html;
+    lobbyLoaded = true;
+
+    // Ensure the code and players are inserted
+    await getLobbyCode();
+
+    // Set up WebSocket AFTER the DOM is ready
+    ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+    console.log("WebSocket opened for host:", ws);
+
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === "players_update") {
+            loadlobby(null, msg.players); // update only players
+        }
+    };
 }
 
 async function getLobbyCode()
