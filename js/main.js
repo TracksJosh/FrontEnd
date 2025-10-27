@@ -849,36 +849,25 @@ async function populateLobby(catHTML, gameCode, players) {
 
 async function submitLobbyParams() {
     const minutes = parseInt(document.getElementById("minutesInput").value);
+    if (isNaN(minutes) || minutes < 0) return alert("Enter valid minutes");
+
     const checks = Array.from(document.querySelectorAll('input[type="checkbox"]'))
-                         .filter(ch => ch.checked)
-                         .map(ch => ch.id);
-    if (isNaN(minutes) || minutes < 0 || checks.length === 0) return;
-	
-    let response = await fetch(`${heroku}/test`, {
+                        .filter(ch => ch.checked)
+                        .map(ch => ch.id);
+    if (checks.length === 0) return alert("Select a category");
+
+    const response = await fetch(`${heroku}/test`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ categories: checks, username: user, lengthoftime: minutes })
     });
     const data = await response.json();
     game_id = data.game_id;
-    const catHTML = data.catdisplay;
-    const gameCode = data.code;
-
-    let loadResponse = await fetch(`${heroku}/load`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: "lobby", game_id })
-    });
-    const loadData = await loadResponse.json();
-    document.getElementById("webapp").innerHTML = loadData.html;
-
-    document.getElementById("catdisplay").innerHTML = catHTML;
-    document.getElementById("codedisplay").textContent = `Game Code: ${gameCode}`;
-
-    await loadlobby(null, null, [user]);
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
     setupWebSocketHandlers();
+
+    await loadlobby(data.catdisplay, data.code, [user]);
 }
 
 async function createLobby(catHTML, gameCode, players) {
