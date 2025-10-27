@@ -823,15 +823,6 @@ async function loadlobby(players)
 	
 }
 
-ws.onmessage = function(event) {
-    let data = JSON.parse(event.data);
-
-    if (data.type === "players_update") {
-        console.log("Updated players:", data.players);
-        loadlobby(data.players); // pass updated list to lobby UI
-    }
-};
-
 
 async function submitLobbyParams()
 {
