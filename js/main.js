@@ -780,7 +780,10 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-function loadLobby(catHTML, gameCode, players) {
+function loadlobby(catHTML, gameCode, players) {
+    if (catHTML) document.getElementById("catdisplay").innerHTML = catHTML;
+    if (gameCode) document.getElementById("codedisplay").innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+
     const playerElements = [
         document.getElementById("player1"),
         document.getElementById("player2"),
@@ -788,37 +791,25 @@ function loadLobby(catHTML, gameCode, players) {
         document.getElementById("player4")
     ];
 
-    if (players && players.length > 0) {
-        players.forEach((player, index) => {
-            if (player && playerElements[index]) {
-                playerElements[index].textContent = player;
-            }
+    if (players) {
+        players.forEach((player, i) => {
+            if (playerElements[i]) playerElements[i].textContent = player || "";
         });
-    }
-	
-	if (catHTML) {
-        const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) catdisplay.innerHTML = catHTML;
-    }
-    if (gameCode) {
-        const codedisplay = document.getElementById("codedisplay");
-        if (codedisplay) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
     }
 }
 
 async function loadLobbyHTML() {
-    if (!lobbyHTMLPromise) {
-        lobbyHTMLPromise = fetch(heroku + "/load", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file: "lobby", game_id })
-        }).then(res => res.json());
-    }
-    const data = await lobbyHTMLPromise;
-    if (!lobbyLoaded) {
-        document.getElementById("webapp").innerHTML = data.html;
-        lobbyLoaded = true;
-    }
+    if (lobbyLoaded) return;
+
+    const webapp = document.getElementById("webapp");
+    let response = await fetch(`${heroku}/load`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: "lobby", game_id })
+    });
+    let data = await response.json();
+    webapp.innerHTML = data.html;
+    lobbyLoaded = true;
 }
 
 async function populateLobby(catHTML, gameCode, players) {
