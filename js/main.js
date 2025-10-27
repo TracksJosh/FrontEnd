@@ -855,11 +855,9 @@ async function submitLobbyParams() {
         let data = await response.json();
         game_id = data.game_id;
 
-
         const catHTML = data.received;
-
-
-        await createLobby(data.catdisplay, data.code, [user]);;
+		const gameCode = data.game_code;
+		await createLobby(catHTML, gameCode, [user]);
     } catch (err) {
         console.error("Error submitting lobby params:", err);
     }
