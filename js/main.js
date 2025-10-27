@@ -741,43 +741,36 @@ async function joingame()
 	body.innerHTML = data["html"];
 }
 
-async function joinGame()
-{
-	const body = document.getElementById("body");
-	let code = document.getElementById("game_code").value;
-	console.log(code);
-	if(code.length == 6)
-	{
-		let response = await fetch(heroku+"/connectGame", {
+async function joinGame() {
+	const code = document.getElementById("game_code").value.trim();
+	if (code.length === 6) {
+		try {
+			let response = await fetch(heroku + "/connectGame", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({"username": user, "game_code": code})
-		});
-		let data = await response.json();
-		if(data["status"] == "no")
-		{
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username: user, game_code: code })
+			});
+
+			let data = await response.json();
+
+			if (data.status === "no") {
+				document.getElementById('customAlert').style.display = 'block';
+				return;
+			}
+
+			
+			const game_id = data.game_id;
+
+			
+			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+			console.log("WebSocket opened for game:", game_id);
+
+			loadlobby(data.catdisplay, data.players);
+		} catch (err) {
+			console.error("Error connecting to game:", err);
 			document.getElementById('customAlert').style.display = 'block';
 		}
-		else
-		{
-			let response2 = await fetch(heroku+"/getidfromcode", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({"username": user, "game_code": code})
-			});
-			let data2 = await response2.json();
-			game_id = data2["id"]
-			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
-			console.log(ws)
-			loadlobby(data["catdisplay"], data["players"]);
-		}
-	}
-	else
-	{
+	} else {
 		document.getElementById('customAlert').style.display = 'block';
 	}
 }
