@@ -766,7 +766,7 @@ async function joinGame() {
         game_id = data.game_id;
 
 
-        await loadlobby(data.catdisplay, data.players, data.game_code);
+        await loadlobby(data.catdisplay, data.players, game_code);
 
 
         ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
@@ -857,7 +857,7 @@ async function submitLobbyParams() {
 
         const catHTML = data.received;
 		const gameCode = data.game_code;
-		await createLobby(catHTML, gameCode, [user]);
+		await createLobby(data.catdisplay, data.game_code, [user]);
     } catch (err) {
         console.error("Error submitting lobby params:", err);
     }
