@@ -828,32 +828,7 @@ async function loadlobby(html, players, gameCode = null) {
     }
 }
 
-async function loadlobby(html, players, gameCode) {
-    if (html) {
-        const catdisplay = document.getElementById("catdisplay");
-        if (catdisplay) catdisplay.innerHTML = html;
-    }
 
-    if (gameCode) {
-        const codedisplay = document.getElementById("codedisplay");
-        codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
-    }
-
-    if (players) {
-        const playerElements = [
-            document.getElementById("player1"),
-            document.getElementById("player2"),
-            document.getElementById("player3"),
-            document.getElementById("player4")
-        ];
-
-        players.forEach((player, i) => {
-            if (playerElements[i]) {
-                playerElements[i].textContent = player || "";
-            }
-        });
-    }
-}
 
 async function submitLobbyParams() {
     const minutes = parseInt(document.getElementById("minutesInput").value);
