@@ -797,11 +797,13 @@ async function loadlobby(catHTML, gameCode, players) {
     if (catHTML) {
         const catDisplay = document.getElementById("catdisplay");
         if (catDisplay) catDisplay.innerHTML = catHTML;
+		console.log(catDisplay);
     }
 
     if (gameCode) {
         const codeDisplay = document.getElementById("codedisplay");
         if (codeDisplay) codeDisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
+		console.log(codeDisplay);
     }
 
     if (players && players.length > 0) {
