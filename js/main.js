@@ -609,16 +609,23 @@ async function loadmain()
 
 async function host()
 {
-	const body = document.getElementById("body");
-	let response = await fetch(heroku+"/load", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"file": "host", "username": user})
-	});
-	let data = await response.json();
-	body.innerHTML = data["html"];
+	if(user == "")
+	{
+		showHostAlert();
+	}
+	else
+	{
+		const body = document.getElementById("body");
+		let response = await fetch(heroku+"/load", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({"file": "host", "username": user})
+		});
+		let data = await response.json();
+		body.innerHTML = data["html"];
+	}
 }
 
 async function loaduser()
@@ -649,6 +656,9 @@ function playchecklogin()
 
 function showGuestAlert() {
   document.getElementById('customAlert').style.display = 'block';
+}
+function showHostAlert() {
+  document.getElementById('customAlert2').style.display = 'block';
 }
 
 function createGuest()
@@ -752,7 +762,15 @@ async function joinGame()
 		}
 		else
 		{
-			game_id = data["game_id"];
+			let response2 = await fetch(heroku+"/getidfromcode", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({"username": user, "game_code": code})
+			});
+			let data2 = await response2.json();
+			game_id = data2["id"]
 			ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
 			console.log(ws)
 			loadlobby(data["catdisplay"], data["players"]);
@@ -766,6 +784,7 @@ async function joinGame()
 
 async function loadlobby(html, players)
 {
+	
 	const body = document.getElementById("body");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -789,12 +808,99 @@ async function loadlobby(html, players)
 	
 }
 
+async function submitLobbyParams()
+{
+	const minutes = parseInt(document.getElementById("minutesInput").value);
 
+    if (isNaN(minutes) || minutes < 0) {
+		alert("Please enter a valid number of minutes.");
+        return;
+    }
+	lengthoftime = minutes * 60000;
+	checks = document.querySelectorAll(`input[type="checkbox"]`);
+	var webapp = document.getElementById("webapp");
+	trueChecks = [];
+	for(var i=0; i<checks.length; i++) 
+	{
+		if(checks[i].checked == true)
+		{
+			trueChecks.push(checks[i].id);
+		}
+	}
+	console.log(trueChecks);
+
+	if(trueChecks.length != 0)
+	{
+		let response = await fetch(heroku+"/test", {
+			method: "POST",
+			headers: {
+					"Content-Type": "application/json"
+				},
+			body: JSON.stringify({ categories: trueChecks, "username": user, "lengthoftime": minutes })
+		});
+		let data = await response.json();
+		webapp.innerHTML = data.received;
+		game_id = data["game_id"];
+		console.log(game_id)
+		let param = encodeURIComponent(JSON.stringify({"game_id":game_id}))
+		console.log(param)
+		let questionResponse = await fetch(heroku+`/card?data=${param}`, {
+			method: "GET",
+			headers: {
+					"Content-Type": "application/json"
+				}	
+		})
+		createLobby();
+	}
+	else
+	{
+		window.alert("Select a category to play Quivia");
+	}
+}
+
+async function createLobby()
+{
+	const body = document.getElementById("body");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "lobby", "game_id": game_id})
+	});
+	let data = await response.json();
+	body.innerHTML += data["html"];
+	const player1 = document.getElementById("player1");
+	ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
+	console.log(ws)
+	player1.innerHTML = user;
+	getLobbyCode();
+}
+
+async function getLobbyCode()
+{
+	const codedisplay = document.getElementById("codedisplay");
+	let response = await fetch(heroku+"/getcode", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"game_id": game_id})
+	});
+	let data = await response.json();
+	codedisplay.innerHTML = `<h3>Game Code: `+data["code"]+`</h3>`;
+	
+}
 
 function leaveGame()
 {
 	ws.close();
 	location.reload();
+}
+
+function closeAlert2()
+{
+	document.getElementById('customAlert2').style.display = 'none';
 }
 
 document.addEventListener("DOMContentLoaded", () => {
