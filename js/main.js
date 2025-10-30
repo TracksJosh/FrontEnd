@@ -965,7 +965,10 @@ function setupWebSocketHandlers() {
 			window.location.href = "/FrontEnd/";
 		}
 		if (data.type === "timer_update") {
-        document.getElementById("time").innerHTML = `<p>${data.time}</p>`;
+			const timerDiv = document.getElementById("time");
+			if (timerDiv) {
+				timerDiv.innerHTML = `<p>${data.time}</p>`;
+			}
 		}
 		if (data.type === "timer_end") {
 			document.getElementById("time").innerHTML = `<p>00:00</p>`;
