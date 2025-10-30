@@ -1006,7 +1006,7 @@ async function startGameTest()
 {
 	ws.send(JSON.stringify({ type: "start_game" }));
 	const webapp = document.getElementById("webapp");
-	webapp.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5>`;
 }
 
 
