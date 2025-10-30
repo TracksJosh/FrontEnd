@@ -824,6 +824,12 @@ async function loadlobby(catHTML, gameCode, players) {
             element.textContent = "Waiting for player...";
         }
     });
+	
+	const startgamedisplay = document.getElementById("startGameButtonHolder");
+	if(playerElements[0].innerHTML === user)
+	{
+		startgamedisplay.innerHTML = `<button onclick="startGameTest()">Start Game</button>`;
+	}
 }
 
 async function loadlobbyHTML() {
@@ -897,8 +903,7 @@ async function createLobby(catHTML, gameCode, players) {
     const codedisplay = document.getElementById("codedisplay");
     if (codedisplay && gameCode) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
 
-	const startgamedisplay = document.getElementById("startGameButtonHolder");
-	startgamedisplay.innerHTML = `<button onclick="startGameTest()">Start Game</button>`;
+	
 	
     loadlobby(null, null, players);
 
