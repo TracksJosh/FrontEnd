@@ -960,6 +960,13 @@ function setupWebSocketHandlers() {
 			ws.close();
 			window.location.href = "/FrontEnd/";
 		}
+		if (data.type === "timer_update") {
+        document.getElementById("time").innerHTML = `<p>${data.time}</p>`;
+		}
+		if (data.type === "timer_end") {
+			document.getElementById("time").innerHTML = `<p>00:00</p>`;
+			timeRanOut();
+		}
     };
 
     ws.onopen = function() {
@@ -971,6 +978,8 @@ function setupWebSocketHandlers() {
         }, 30000);
 		
     };
+	
+	
 
     ws.onclose = function() {
         console.log("WebSocket closed");
@@ -992,6 +1001,14 @@ function closeAlert2()
 {
 	document.getElementById('customAlert2').style.display = 'none';
 }
+
+async function startGameTest()
+{
+	ws.send(JSON.stringify({ type: "start_game" }));
+	const webapp = document.getElementById("webapp");
+	webapp.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
    if (sessionStorage.getItem("reloaded") === "true") {
