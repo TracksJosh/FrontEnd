@@ -897,6 +897,9 @@ async function createLobby(catHTML, gameCode, players) {
     const codedisplay = document.getElementById("codedisplay");
     if (codedisplay && gameCode) codedisplay.innerHTML = `<h3>Game Code: ${gameCode}</h3>`;
 
+	const startgamedisplay = document.getElementById("startGameButtonHolder");
+	startgamedisplay.innerHTML = `<button onclick="startGameTest()">Start Game</button>`;
+	
     loadlobby(null, null, players);
 
     ws = new WebSocket(`${protocol}://${new URL(heroku).host}/ws/${game_id}/${user}`);
