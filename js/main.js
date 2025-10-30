@@ -955,6 +955,10 @@ function setupWebSocketHandlers() {
         if (data.type === "players_update") {
             loadlobby(null, null, data.players);
         }
+		if (data.type === "start_game") {
+			const webapp = document.getElementById("webapp");
+			webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5>`;
+		}
 		if (data.type === "host_disconnected") {
 			alert(data.message || "The host has disconnected. The lobby is closed.");
 			ws.close();
@@ -1005,8 +1009,6 @@ function closeAlert2()
 async function startGameTest()
 {
 	ws.send(JSON.stringify({ type: "start_game" }));
-	const webapp = document.getElementById("webapp");
-	webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5>`;
 }
 
 
