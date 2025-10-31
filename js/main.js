@@ -1012,6 +1012,7 @@ function closeAlert2()
 async function startGameTest()
 {
 	ws.send(JSON.stringify({ type: "start_game" }));
+	ws.send(JSON.stringify({ type: "assign_teams" }));
 }
 
 
