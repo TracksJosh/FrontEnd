@@ -989,7 +989,7 @@ function setupWebSocketHandlers() {
 		
 		if (data.type === "team_cards") {
 			console.log(`Received cards for ${data.team}:`, data.cards);
-			displayTeamCards(data.team, data.cards);
+			displayTeamCards(data.cards);
 		}
     };
 
