@@ -155,7 +155,7 @@ async function selectCard(id)
 	{
 		question.leadin = "";
 	}
-	webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
+	webapp.innerHTML = `<p id="team">`+team+`</p><div id="time"></div><h5 id="score">`+score+`</h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
 	displayAns(data, webapp);
 	var sco = document.getElementById("score");
 	sco.innerHTML = "Score: "+score;
@@ -972,7 +972,7 @@ function setupWebSocketHandlers() {
         
         if (data.type === "start_game") {
             const webapp = document.getElementById("webapp");
-            webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score"></h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
+            webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">`+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
         }
         
         if (data.type === "host_disconnected") {
