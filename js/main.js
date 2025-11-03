@@ -952,45 +952,54 @@ function setupWebSocketHandlers() {
 
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
+        
         if (data.type === "players_update") {
+            // This is called when the full player list is broadcast
             loadlobby(null, null, data.players);
         }
-		if (data.type === "start_game") {
-			const webapp = document.getElementById("webapp");
-			webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5>`;
-		}
-		if (data.type === "host_disconnected") {
-			alert(data.message || "The host has disconnected. The lobby is closed.");
-			ws.close();
-			window.location.href = "/FrontEnd/";
-		}
-		if (data.type === "timer_update") {
-			const timerDiv = document.getElementById("time");
-			if (timerDiv) {
-				timerDiv.innerHTML = `<p>${data.time}</p>`;
-			}
-		}
-		if (data.type === "timer_end") {
-			document.getElementById("time").innerHTML = `<p>00:00</p>`;
-			timeRanOut();
-		}
+        
+        if (data.type === "player_disconnected") {
+            // A regular player left - refresh the lobby
+            console.log(`Player ${data.username} disconnected`);
+            loadlobby(null, null, data.players);
+        }
+        
+        if (data.type === "start_game") {
+            const webapp = document.getElementById("webapp");
+            webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5>`;
+        }
+        
+        if (data.type === "host_disconnected") {
+            alert(data.message || "The host has disconnected. The lobby is closed.");
+            ws.close();
+            window.location.href = "/FrontEnd/";
+        }
+        
+        if (data.type === "timer_update") {
+            const timerDiv = document.getElementById("time");
+            if (timerDiv) {
+                timerDiv.innerHTML = `<p>${data.time}</p>`;
+            }
+        }
+        
+        if (data.type === "timer_end") {
+            document.getElementById("time").innerHTML = `<p>00:00</p>`;
+            timeRanOut();
+        }
     };
 
     ws.onopen = function() {
         console.log("WebSocket connection established for game:", game_id);
-		heartbeatInterval = setInterval(() => {
+        heartbeatInterval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: "ping" }));
             }
         }, 30000);
-		
     };
-	
-	
 
     ws.onclose = function() {
         console.log("WebSocket closed");
-		clearInterval(heartbeatInterval);
+        clearInterval(heartbeatInterval);
     };
 
     ws.onerror = function(err) {
