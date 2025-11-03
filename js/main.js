@@ -720,14 +720,14 @@ async function timeRanOut()
 	let que = document.getElementById("question");
     if(score <= 0)
 	{
-		que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div>
+		que.innerHTML = `<p id="team"></p><div id="time"></div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Sorry, you lost :(</p>`;
 	}
 	else
 	{
-		que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div>
+		que.innerHTML = `<p id="team"></p><div id="time"></div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Congrats!! You win<br>YIPPEE!!</p>`;
