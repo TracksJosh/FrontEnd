@@ -229,7 +229,12 @@ async function selectAnswer(ans, id) {
 	}
 
     document.getElementById("score").innerHTML = "Score: " + score;
-    startCardGame(false);
+    let data = await response.json();
+
+    if (data.team_cards) {
+        // Update the UI with new cards
+        displayTeamCards(current_team, data.team_cards);
+    }
 }
 
 async function inputAnswer(answer, data2)
