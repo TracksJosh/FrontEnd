@@ -1034,18 +1034,34 @@ function displayTeamCards(cards) {
     if (!dispCards) return;
 
     // Build HTML table
-    let html = `<table><tr>`;
-    for (let i = 0; i < cards.length; i++) {
-        const [imgName, text1, text2] = cards[i];
-        html += `
-            <td>
-                <p class="card" onclick="selectCard(${i})">
-                    <img class="${imgName}" src="img/${imgName}.png"><br>
-                    ${text1}<br>${text2}
-                </p>
-            </td>
-        `;
-    }
+    let html = `
+<table><tr>
+  <td>
+    <p class="card" onclick="selectCard(0)">
+      <img src="img/${card_1[0].replace(/\s+/g, '_')}.png" 
+           alt="${card_1[0]}" 
+           onerror="this.src='img/default_card.png'">
+      <br>${card_1[1]}<br>${card_1[2]}
+    </p>
+  </td>
+  <td>
+    <p class="card" onclick="selectCard(1)">
+      <img src="img/${card_2[0].replace(/\s+/g, '_')}.png" 
+           alt="${card_2[0]}" 
+           onerror="this.src='img/default_card.png'">
+      <br>${card_2[1]}<br>${card_2[2]}
+    </p>
+  </td>
+  <td>
+    <p class="card" onclick="selectCard(2)">
+      <img src="img/${card_3[0].replace(/\s+/g, '_')}.png" 
+           alt="${card_3[0]}" 
+           onerror="this.src='img/default_card.png'">
+      <br>${card_3[1]}<br>${card_3[2]}
+    </p>
+  </td>
+</tr></table>
+`;
     html += `</tr></table>`;
 
     // Insert into page
