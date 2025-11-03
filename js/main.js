@@ -667,7 +667,7 @@ function playchecklogin()
 	{
 		showGuestAlert();
 	}
-	else loadchecklist();
+	else joingame();
 }
 
 function showGuestAlert() {
