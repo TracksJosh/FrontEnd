@@ -210,11 +210,13 @@ function getDistractors(data) {
 }
 
 async function selectAnswer(ans, id) {
-    console.log("Selected:", ans.text);
+    const dispTeam = document.getElementById("team");
+	let team = dispTeam.innerHTML;
+	console.log("Selected:", ans.text);
     let response = await fetch(heroku+"/ans", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id})
+        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id, "team": team})
     });
     let data = await response.json();
     if (data.status == "correct")
