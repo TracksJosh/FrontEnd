@@ -22,6 +22,7 @@ let lobbyHTML = null;
 let lobbyLoaded = false;
 let categoriesSet = false;
 let heartbeatInterval;
+let categoryTemp;
 
 function checkAll()
 {
@@ -150,6 +151,7 @@ async function selectCard(id)
 	});
 	let data = await response.json();
 	console.log(data["question"]);
+	categoryTemp = data["question"]["category"];
 	var webapp = document.getElementById("webapp");
 	if (typeof data.leadin === undefined || data.leadin === null) 
 	{
@@ -212,11 +214,14 @@ function getDistractors(data) {
 async function selectAnswer(ans, id) {
     const dispTeam = document.getElementById("team");
 	let team = dispTeam.innerHTML;
+	const dispLead = document.getElementById("leadin");
+	let leadin = dispLead.innerHTML;
+	let category = categoryTemp;
 	console.log("Selected:", ans.text);
     let response = await fetch(heroku+"/ans", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id, "team": team})
+        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id, "team": team, "leadin": leadin, "category": category})
     });
     let data = await response.json();
     if (data.status == "correct")
