@@ -1036,6 +1036,8 @@ function displayTeamCards(cards) {
 	let card_1 = cards[0];
 	let card_2 = cards[1];
 	let card_3 = cards[2];
+	
+	console.log(card_1);
 
     // Build HTML table
     let html = `
