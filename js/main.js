@@ -221,7 +221,7 @@ async function selectAnswer(ans, id) {
     let response = await fetch(heroku+"/ans", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id, "team": team, "leadin": leadin, "category": category})
+        body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id, "team": team, "leadin": leadin, "category": category, "user": user})
     });
     let data = await response.json();
     if (data.status == "correct")
