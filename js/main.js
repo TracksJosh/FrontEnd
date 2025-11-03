@@ -681,7 +681,7 @@ function createGuest()
 {
 	var temp = Math.floor(Math.random() * (123456789 - 1 + 1) + 1);
 	user="Guest-"+temp;
-	loadchecklist();
+	joingame();
 }
 
 async function setCountdown()
