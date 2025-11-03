@@ -154,7 +154,7 @@ async function selectCard(id)
 	{
 		question.leadin = "";
 	}
-	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
+	que.innerHTML = `<div id="time"></div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
 	displayAns(data, que);
 	var sco = document.getElementById("score");
 	sco.innerHTML = "Score: "+score;
