@@ -1048,7 +1048,8 @@ function displayTeamCards(cards, team) {
 	dispTeam.innerHTML = team;
 	const dispCards = document.getElementById("cards");
     if (!dispCards) return;
-
+	
+	console.log("displayTeamCards "+ cards)
 	card_1 = cards[0];
 	card_2 = cards[1];
 	card_3 = cards[2];
