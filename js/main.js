@@ -120,13 +120,14 @@ async function startCardGame(ti)
 	console.log(card_2);
 	console.log(card_3);
 	var que = document.getElementById("question");
-	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card_1[0]+`" src=img/`+card_1[0]+`.png><br>`+card_1[1]+`<br>`+card_1[2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card_2[0]+`" src=img/`+card_2[0]+`.png><br>`+card_2[1]+`<br>`+card_2[2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card_3[0]+`" src=img/`+card_3[0]+`.png><br>`+card_3[1]+`<br>`+card_3[2]+`</p></tr></table></div>`;
+	que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card_1[0]+`" src=img/`+card_1[0]+`.png><br>`+card_1[1]+`<br>`+card_1[2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card_2[0]+`" src=img/`+card_2[0]+`.png><br>`+card_2[1]+`<br>`+card_2[2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card_3[0]+`" src=img/`+card_3[0]+`.png><br>`+card_3[1]+`<br>`+card_3[2]+`</p></tr></table></div>`;
 	if(ti) setCountdown();
 }
 
 async function selectCard(id)
 {
-	
+	const dispTeam = document.getElementById("team");
+	let team = dispTeam.innerHTML;
 	question_id = 0;
 	switch(id)
 	{
@@ -145,7 +146,7 @@ async function selectCard(id)
 			headers: {
 				"Content-Type": "application/json"
 			},
-			body: JSON.stringify({"card":id, "game_id":game_id, "question_id":question_id})
+			body: JSON.stringify({"card":id, "game_id":game_id, "question_id":question_id, "team": team})
 	});
 	let data = await response.json();
 	console.log(data["question"]);
@@ -154,7 +155,7 @@ async function selectCard(id)
 	{
 		question.leadin = "";
 	}
-	que.innerHTML = `<div id="time"></div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
+	que.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
 	displayAns(data, que);
 	var sco = document.getElementById("score");
 	sco.innerHTML = "Score: "+score;
@@ -171,7 +172,7 @@ async function startGame()
 	});
 	let data = await response.json();
 	var que = document.getElementById("question");
-	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
 	displayAns(data, que);
 	var sco = document.getElementById("score");
 	sco.innerHTML = "Score: "+score;
@@ -246,7 +247,7 @@ async function inputAnswer(answer, data2)
 			body: JSON.stringify({"answer": answer, "question": id, "unformat": data2["unformatted"]})
 	});
 	let data = await response.json();
-	que.innerHTML = `<div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
+	que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div><h5 id="score"></h5><p id="leadin">`+data["leadin"]+`</p><p>`+data["question"]+`</p>`;
 	if(data["id"] != "NaN")
 	{
 		if(data["status"] == "correct")
@@ -709,14 +710,14 @@ async function timeRanOut()
 	let que = document.getElementById("question");
     if(score <= 0)
 	{
-		que.innerHTML = `<div id="time">`+timestring+`</div>
+		que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Sorry, you lost :(</p>`;
 	}
 	else
 	{
-		que.innerHTML = `<div id="time">`+timestring+`</div>
+		que.innerHTML = `<p id="team"></p><div id="time">`+timestring+`</div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Congrats!! You win<br>YIPPEE!!</p>`;
@@ -966,7 +967,7 @@ function setupWebSocketHandlers() {
         
         if (data.type === "start_game") {
             const webapp = document.getElementById("webapp");
-            webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
+            webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score"></h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
         }
         
         if (data.type === "host_disconnected") {
@@ -989,7 +990,7 @@ function setupWebSocketHandlers() {
 		
 		if (data.type === "team_cards") {
 			console.log(`Received cards for ${data.team}:`, data.cards);
-			displayTeamCards(data.cards);
+			displayTeamCards(data.cards, data.team);
 		}
     };
 
@@ -1029,8 +1030,10 @@ async function startGameTest()
 	ws.send(JSON.stringify({ type: "start_game" }));
 }
 
-function displayTeamCards(cards) {
-    const dispCards = document.getElementById("cards");
+function displayTeamCards(cards, team) {
+    const dispTeam = document.getElementById("team");
+	dispTeam.innerHTML = team;
+	const dispCards = document.getElementById("cards");
     if (!dispCards) return;
 
 	card_1 = cards[0];
