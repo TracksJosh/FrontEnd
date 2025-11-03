@@ -718,17 +718,17 @@ async function setCountdown()
 }
 async function timeRanOut()
 {
-	let que = document.getElementById("question");
+	let webapp = document.getElementById("webapp");
     if(score <= 0)
 	{
-		que.innerHTML = `<p id="team"></p><div id="time"></div>
+		webapp.innerHTML = `<p id="team"></p><div id="time"></div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Sorry, you lost :(</p>`;
 	}
 	else
 	{
-		que.innerHTML = `<p id="team"></p><div id="time"></div>
+		webapp.innerHTML = `<p id="team"></p><div id="time"></div>
 					 <h5 id="score">Score: ${score}</h5>
                      <p id="leadin"></p>
                      <p>Congrats!! You win<br>YIPPEE!!</p>`;
@@ -1043,7 +1043,7 @@ async function startGameTest()
 
 function displayTeamCards(cards, team) {
     const webapp = document.getElementById("webapp");
-    webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">`+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
+    webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
 	const dispTeam = document.getElementById("team");
 	dispTeam.innerHTML = team;
 	const dispCards = document.getElementById("cards");
