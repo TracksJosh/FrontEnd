@@ -1033,6 +1033,10 @@ function displayTeamCards(cards) {
     const dispCards = document.getElementById("cards");
     if (!dispCards) return;
 
+	let card_1 = cards[0];
+	let card_2 = cards[1];
+	let card_3 = cards[2];
+
     // Build HTML table
     let html = `
 <table><tr>
