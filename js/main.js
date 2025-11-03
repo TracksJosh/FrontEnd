@@ -1034,7 +1034,7 @@ function displayTeamCards(cards) {
     if (!dispCards) return;
 
     // Build HTML table
-    let html = `<table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card[0][0]+`" src=img/`+card[0][0]+`.png><br>`+card[0][1]+`<br>`+card[0][2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card[1][0]+`" src=img/`+card[1][0]+`.png><br>`+card[1][1]+`<br>`+card[1][2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card[2][0]+`" src=img/`+card[2][0]+`.png><br>`+card[2][1]+`<br>`+card[2][2]+`</p></tr></table>`;
+    let html = `<table><tr><td><p class="card" onclick=selectCard(0)><img class="`+cards[0][0]+`" src=img/`+cards[0][0]+`.png><br>`+cards[0][1]+`<br>`+cards[0][2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+cards[1][0]+`" src=img/`+cards[1][0]+`.png><br>`+cards[1][1]+`<br>`+cards[1][2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+cards[2][0]+`" src=img/`+cards[2][0]+`.png><br>`+cards[2][1]+`<br>`+cards[2][2]+`</p></tr></table>`;
 
     // Insert into page
     dispCards.innerHTML = html;
