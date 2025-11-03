@@ -1033,14 +1033,8 @@ function displayTeamCards(cards) {
     const dispCards = document.getElementById("cards");
     if (!dispCards) return;
 
-	let card_1 = cards[0];
-	let card_2 = cards[1];
-	let card_3 = cards[2];
-	
-	console.log(card_1);
-
     // Build HTML table
-    let html = `<table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card_1[0]+`" src=img/`+card_1[0]+`.png><br>`+card_1[1]+`<br>`+card_1[2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card_2[0]+`" src=img/`+card_2[0]+`.png><br>`+card_2[1]+`<br>`+card_2[2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card_3[0]+`" src=img/`+card_3[0]+`.png><br>`+card_3[1]+`<br>`+card_3[2]+`</p></tr></table>`;
+    let html = `<table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card[0][0]+`" src=img/`+card[0][0]+`.png><br>`+card[0][1]+`<br>`+card[0][2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card[1][0]+`" src=img/`+card[1][0]+`.png><br>`+card[1][1]+`<br>`+card[1][2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card[2][0]+`" src=img/`+card[2][0]+`.png><br>`+card[2][1]+`<br>`+card[2][2]+`</p></tr></table>`;
 
     // Insert into page
     dispCards.innerHTML = html;
