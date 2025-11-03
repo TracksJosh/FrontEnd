@@ -966,7 +966,7 @@ function setupWebSocketHandlers() {
         
         if (data.type === "start_game") {
             const webapp = document.getElementById("webapp");
-            webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5>`;
+            webapp.innerHTML = `<div id="time"></div><h5 id="score"></h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
         }
         
         if (data.type === "host_disconnected") {
@@ -986,6 +986,11 @@ function setupWebSocketHandlers() {
             document.getElementById("time").innerHTML = `<p>00:00</p>`;
             timeRanOut();
         }
+		
+		if (data.type === "team_cards") {
+			console.log(`Received cards for ${data.team}:`, data.cards);
+			displayTeamCards(data.team, data.cards);
+		}
     };
 
     ws.onopen = function() {
@@ -1022,6 +1027,29 @@ async function startGameTest()
 {
 	ws.send(JSON.stringify({ type: "assign_teams" }));
 	ws.send(JSON.stringify({ type: "start_game" }));
+}
+
+function displayTeamCards(cards) {
+    const dispCards = document.getElementById("cards");
+    if (!dispCards) return;
+
+    // Build HTML table
+    let html = `<table><tr>`;
+    for (let i = 0; i < cards.length; i++) {
+        const [imgName, text1, text2] = cards[i];
+        html += `
+            <td>
+                <p class="card" onclick="selectCard(${i})">
+                    <img class="${imgName}" src="img/${imgName}.png"><br>
+                    ${text1}<br>${text2}
+                </p>
+            </td>
+        `;
+    }
+    html += `</tr></table>`;
+
+    // Insert into page
+    dispCards.innerHTML = html;
 }
 
 
