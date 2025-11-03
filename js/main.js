@@ -1040,35 +1040,7 @@ function displayTeamCards(cards) {
 	console.log(card_1);
 
     // Build HTML table
-    let html = `
-<table><tr>
-  <td>
-    <p class="card" onclick="selectCard(0)">
-      <img src="img/${card_1[0].replace(/\s+/g, '_')}.png" 
-           alt="${card_1[0]}" 
-           onerror="this.src='img/default_card.png'">
-      <br>${card_1[1]}<br>${card_1[2]}
-    </p>
-  </td>
-  <td>
-    <p class="card" onclick="selectCard(1)">
-      <img src="img/${card_2[0].replace(/\s+/g, '_')}.png" 
-           alt="${card_2[0]}" 
-           onerror="this.src='img/default_card.png'">
-      <br>${card_2[1]}<br>${card_2[2]}
-    </p>
-  </td>
-  <td>
-    <p class="card" onclick="selectCard(2)">
-      <img src="img/${card_3[0].replace(/\s+/g, '_')}.png" 
-           alt="${card_3[0]}" 
-           onerror="this.src='img/default_card.png'">
-      <br>${card_3[1]}<br>${card_3[2]}
-    </p>
-  </td>
-</tr></table>
-`;
-    html += `</tr></table>`;
+    let html = `<table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card_1[0]+`" src=img/`+card_1[0]+`.png><br>`+card_1[1]+`<br>`+card_1[2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card_2[0]+`" src=img/`+card_2[0]+`.png><br>`+card_2[1]+`<br>`+card_2[2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card_3[0]+`" src=img/`+card_3[0]+`.png><br>`+card_3[1]+`<br>`+card_3[2]+`</p></tr></table>`;
 
     // Insert into page
     dispCards.innerHTML = html;
