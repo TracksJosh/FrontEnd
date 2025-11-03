@@ -1042,7 +1042,9 @@ async function startGameTest()
 }
 
 function displayTeamCards(cards, team) {
-    const dispTeam = document.getElementById("team");
+    const webapp = document.getElementById("webapp");
+    webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">`+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
+	const dispTeam = document.getElementById("team");
 	dispTeam.innerHTML = team;
 	const dispCards = document.getElementById("cards");
     if (!dispCards) return;
