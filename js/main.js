@@ -150,13 +150,13 @@ async function selectCard(id)
 	});
 	let data = await response.json();
 	console.log(data["question"]);
-	var que = document.getElementById("question");
+	var webapp = document.getElementById("webapp");
 	if (typeof data.leadin === undefined || data.leadin === null) 
 	{
 		question.leadin = "";
 	}
-	que.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
-	displayAns(data, que);
+	webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score"></h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
+	displayAns(data, webapp);
 	var sco = document.getElementById("score");
 	sco.innerHTML = "Score: "+score;
 }
