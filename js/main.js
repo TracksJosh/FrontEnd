@@ -824,7 +824,11 @@ async function loadlobby(catHTML, gameCode, players) {
         document.getElementById("player1"),
         document.getElementById("player2"),
         document.getElementById("player3"),
-        document.getElementById("player4")
+        document.getElementById("player4"),
+        document.getElementById("player5"),
+        document.getElementById("player6"),
+        document.getElementById("player7"),
+        document.getElementById("player8")
     ];
 	
 	playerElements.forEach((element, index) => {
