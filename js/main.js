@@ -1045,7 +1045,7 @@ function setupWebSocketHandlers() {
 			for (const [teamName, members] of Object.entries(teams)) {
 				if (members.includes(user)) {
 					myTeam = { name: teamName, members: members };
-					index = members.indexOf(myUsername);
+					index = members.indexOf(user);
 					break;
 				}
 			}
