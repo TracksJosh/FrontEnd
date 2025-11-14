@@ -23,6 +23,8 @@ let lobbyLoaded = false;
 let categoriesSet = false;
 let heartbeatInterval;
 let categoryTemp;
+let canPick = false;
+let canAnswer = false;
 
 function checkAll()
 {
@@ -1006,6 +1008,21 @@ function setupWebSocketHandlers() {
 		if (data.type === "team_cards") {
 			console.log(`Received cards for ${data.team}:`, data.cards);
 			displayTeamCards(data.cards, data.team);
+		}
+		if (data.type === "teams_assigned") {
+			const teams = data.teams;
+
+			// Find my team
+			let myTeam = null;
+
+			for (const [teamName, members] of Object.entries(teams)) {
+				if (members.includes(user)) {
+					myTeam = { name: teamName, members: members };
+					break;
+				}
+			}
+
+			console.log("My team:", myTeam);
 		}
     };
 
