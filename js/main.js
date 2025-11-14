@@ -1046,13 +1046,11 @@ function setupWebSocketHandlers() {
 				if (members.includes(user)) {
 					myTeam = { name: teamName, members: members };
 					index = members.indexOf(user);
-					break;
+					if (members.length === 1) myRole = "both";
+					else if (index === 0) myRole = "picker";
+					else myRole = "answerer";
 				}
 			}
-			if (members.length === 1) myRole = "both";
-			else if (index === 0) myRole = "picker";
-            else myRole = "answerer";
-
 			console.log("My team:", myTeam);
 		}
     };
