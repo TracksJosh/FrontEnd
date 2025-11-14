@@ -1098,7 +1098,7 @@ function displayTeamCards(cards, team) {
         <div id="time"></div>
         <h5 id="score">Score: ${score}</h5>
         <p id="leadin"></p>
-        <div align=center><div id="cards"></div></div>
+        <div align="center"><div id="cards"></div></div>
     `;
 
     const dispTeam = document.getElementById("team");
@@ -1107,40 +1107,39 @@ function displayTeamCards(cards, team) {
     const dispCards = document.getElementById("cards");
     if (!dispCards) return;
 
-    console.log("displayTeamCards ", cards);
+    card_1 = cards[0];
+    card_2 = cards[1];
+    card_3 = cards[2];
 
-    let card_1 = cards[0];
-    let card_2 = cards[1];
-    let card_3 = cards[2];
+    const clickable = (myRole === "picker");   // <-- IMPORTANT
 
-    // Determine if this user is allowed to click
-    const isPicker = (window.myRole === "picker" || window.myRole === "both");
-
-    // Build HTML table
-    let html = `<table><tr>`;
-
-    // Helper to generate each card (clickable ONLY IF picker)
-    function buildCard(card, index) {
-        const disabled = isPicker ? "" : "disabled-card";
-        const onclick = isPicker ? `onclick=selectCard(${index})` : "";
+    let getCardHTML = (card, index) => {
         return `
             <td>
-                <p class="card ${disabled}" ${onclick}>
+                <p class="card" ${ clickable ? `onclick="selectCard(${index})"` : "" }>
                     <img class="${card[0]}" src="img/${card[0]}.png"><br>
                     ${card[1]}<br>
                     ${card[2]}
                 </p>
-            </td>
-        `;
-    }
+            </td>`;
+    };
 
-    html += buildCard(card_1, 0);
-    html += buildCard(card_2, 1);
-    html += buildCard(card_3, 2);
-    html += `</tr></table>`;
+    let html = `
+        <table><tr>
+            ${getCardHTML(card_1, 0)}
+            ${getCardHTML(card_2, 1)}
+            ${getCardHTML(card_3, 2)}
+        </tr></table>
+    `;
 
-    // Insert into page
     dispCards.innerHTML = html;
+
+    if (!clickable) {
+        document.querySelectorAll(".card").forEach(c => {
+            c.style.opacity = "0.5";      // fade out
+            c.style.cursor = "not-allowed";
+        });
+    }
 }
 
 
