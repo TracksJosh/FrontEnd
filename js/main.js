@@ -1093,53 +1093,54 @@ async function startGameTest()
 
 function displayTeamCards(cards, team) {
     const webapp = document.getElementById("webapp");
-    webapp.innerHTML = `
-        <p id="team"></p>
-        <div id="time"></div>
-        <h5 id="score">Score: ${score}</h5>
-        <p id="leadin"></p>
-        <div align="center"><div id="cards"></div></div>
-    `;
-
+    webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
+    
     const dispTeam = document.getElementById("team");
     dispTeam.innerHTML = team;
 
     const dispCards = document.getElementById("cards");
     if (!dispCards) return;
 
+    console.log("displayTeamCards "+ cards)
+
     card_1 = cards[0];
     card_2 = cards[1];
     card_3 = cards[2];
 
-    const clickable = (myRole === "picker" || myRole === "both");   // <-- IMPORTANT
+    const myRole = localStorage.getItem("role") || "";
+    const isAnswerer = myRole.includes("answerer");
+    const clickable = myRole.includes("picker");
 
-    let getCardHTML = (card, index) => {
+    function buildCard(card, index) {
+        const identifier = card[0];
+        const category = card[1];
+        const difficulty = card[2];
+        
+        const difficultyText = isAnswerer ? "" : `<br>${difficulty}`;
+
+        const onclick = clickable ? `onclick="selectCard(${index})"` : "";
+
         return `
-            <td>
-                <p class="card" ${ clickable ? `onclick="selectCard(${index})"` : "" }>
-                    <img class="${card[0]}" src="img/${card[0]}.png"><br>
-                    ${card[1]}<br>
-                    ${card[2]}
-                </p>
-            </td>`;
-    };
+        <td>
+            <p class="card" ${onclick}>
+                <img class="${identifier}" src="img/${identifier}.png"><br>
+                ${category}
+                ${difficultyText}
+            </p>
+        </td>`;
+    }
 
     let html = `
-        <table><tr>
-            ${getCardHTML(card_1, 0)}
-            ${getCardHTML(card_2, 1)}
-            ${getCardHTML(card_3, 2)}
-        </tr></table>
+        <table>
+            <tr>
+                ${buildCard(card_1, 0)}
+                ${buildCard(card_2, 1)}
+                ${buildCard(card_3, 2)}
+            </tr>
+        </table>
     `;
 
     dispCards.innerHTML = html;
-
-    if (!clickable) {
-        document.querySelectorAll(".card").forEach(c => {
-            c.style.opacity = "0.5";      // fade out
-            c.style.cursor = "not-allowed";
-        });
-    }
 }
 
 
