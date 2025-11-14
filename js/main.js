@@ -131,7 +131,7 @@ async function startCardGame(ti)
 
 async function selectCard(id) {
 
-    const canPick = (window.myRole === "picker" || window.myRole === "both");
+    const canPick = (myRole === "picker" || myRole === "both");
 
     if (!canPick) {
         console.warn("You are not allowed to pick a card (answerer role).");
