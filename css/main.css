@@ -114,3 +114,9 @@ input{
 	width: 20%;
     height: 18%;
 }
+
+.disabled-card {
+    opacity: 0.4;
+    pointer-events: none;
+    user-select: none;
+}

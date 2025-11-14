@@ -25,6 +25,8 @@ let heartbeatInterval;
 let categoryTemp;
 let canPick = false;
 let canAnswer = false;
+let myTeam = null;
+let myRole = null;
 
 function checkAll()
 {
@@ -127,42 +129,67 @@ async function startCardGame(ti)
 	if(ti) setCountdown();
 }
 
-async function selectCard(id)
-{
-	const dispTeam = document.getElementById("team");
-	let team = dispTeam.innerHTML;
-	question_id = 0;
-	switch(id)
-	{
-		case 0:
-			question_id = card_1[3];
-			break;
-		case 1:
-			question_id = card_2[3];
-			break;
-		case 2:
-			question_id = card_3[3];
-			break;
-	}
-	let response = await fetch(heroku+"/pickcard", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({"card":id, "game_id":game_id, "question_id":question_id, "team": team})
-	});
-	let data = await response.json();
-	console.log(data["question"]);
-	categoryTemp = data["question"]["category"];
-	var webapp = document.getElementById("webapp");
-	if (typeof data.leadin === undefined || data.leadin === null) 
-	{
-		question.leadin = "";
-	}
-	webapp.innerHTML = `<p id="team">`+team+`</p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin">`+data["question"].leadin+`</p><p>`+data["question"].question+`</p>`;
-	displayAns(data, webapp);
-	var sco = document.getElementById("score");
-	sco.innerHTML = "Score: "+score;
+async function selectCard(id) {
+
+    const canPick = (window.myRole === "picker" || window.myRole === "both");
+
+    if (!canPick) {
+        console.warn("You are not allowed to pick a card (answerer role).");
+        return;
+    }
+
+    const dispTeam = document.getElementById("team");
+    let team = dispTeam.innerHTML;
+    question_id = 0;
+
+    switch(id) {
+        case 0:
+            question_id = card_1[3];
+            break;
+        case 1:
+            question_id = card_2[3];
+            break;
+        case 2:
+            question_id = card_3[3];
+            break;
+    }
+
+    let response = await fetch(heroku + "/pickcard", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "card": id,
+            "game_id": game_id,
+            "question_id": question_id,
+            "team": team
+        })
+    });
+
+    let data = await response.json();
+    console.log(data["question"]);
+
+    categoryTemp = data["question"]["category"];
+
+    var webapp = document.getElementById("webapp");
+
+    if (typeof data.leadin === undefined || data.leadin === null) {
+        question.leadin = "";
+    }
+
+    webapp.innerHTML = `
+        <p id="team">${team}</p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${score}</h5>
+        <p id="leadin">${data["question"].leadin}</p>
+        <p>${data["question"].question}</p>
+    `;
+
+    displayAns(data, webapp);
+
+    var sco = document.getElementById("score");
+    sco.innerHTML = "Score: " + score;
 }
 
 async function startGame()
@@ -1012,15 +1039,19 @@ function setupWebSocketHandlers() {
 		if (data.type === "teams_assigned") {
 			const teams = data.teams;
 
-			// Find my team
-			let myTeam = null;
-
+			myTeam = null;
+			myRole = null;
+			let index = 0;
 			for (const [teamName, members] of Object.entries(teams)) {
 				if (members.includes(user)) {
 					myTeam = { name: teamName, members: members };
+					index = members.indexOf(myUsername);
 					break;
 				}
 			}
+			if (members.length === 1) myRole = "both";
+			else if (index === 0) myRole = "picker";
+            else myRole = "answerer";
 
 			console.log("My team:", myTeam);
 		}
@@ -1064,20 +1095,51 @@ async function startGameTest()
 
 function displayTeamCards(cards, team) {
     const webapp = document.getElementById("webapp");
-    webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
-	const dispTeam = document.getElementById("team");
-	dispTeam.innerHTML = team;
-	const dispCards = document.getElementById("cards");
-    if (!dispCards) return;
-	
-	console.log("displayTeamCards "+ cards)
-	card_1 = cards[0];
-	card_2 = cards[1];
-	card_3 = cards[2];
+    webapp.innerHTML = `
+        <p id="team"></p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${score}</h5>
+        <p id="leadin"></p>
+        <div align=center><div id="cards"></div></div>
+    `;
 
-	
+    const dispTeam = document.getElementById("team");
+    dispTeam.innerHTML = team;
+
+    const dispCards = document.getElementById("cards");
+    if (!dispCards) return;
+
+    console.log("displayTeamCards ", cards);
+
+    let card_1 = cards[0];
+    let card_2 = cards[1];
+    let card_3 = cards[2];
+
+    // Determine if this user is allowed to click
+    const isPicker = (window.myRole === "picker" || window.myRole === "both");
+
     // Build HTML table
-    let html = `<table><tr><td><p class="card" onclick=selectCard(0)><img class="`+card_1[0]+`" src=img/`+card_1[0]+`.png><br>`+card_1[1]+`<br>`+card_1[2]+`</p><td><p class="card" onclick=selectCard(1)><img class="`+card_2[0]+`" src=img/`+card_2[0]+`.png><br>`+card_2[1]+`<br>`+card_2[2]+`</p><td><p class="card" onclick=selectCard(2)><img class="`+card_3[0]+`" src=img/`+card_3[0]+`.png><br>`+card_3[1]+`<br>`+card_3[2]+`</p></tr></table>`;
+    let html = `<table><tr>`;
+
+    // Helper to generate each card (clickable ONLY IF picker)
+    function buildCard(card, index) {
+        const disabled = isPicker ? "" : "disabled-card";
+        const onclick = isPicker ? `onclick=selectCard(${index})` : "";
+        return `
+            <td>
+                <p class="card ${disabled}" ${onclick}>
+                    <img class="${card[0]}" src="img/${card[0]}.png"><br>
+                    ${card[1]}<br>
+                    ${card[2]}
+                </p>
+            </td>
+        `;
+    }
+
+    html += buildCard(card_1, 0);
+    html += buildCard(card_2, 1);
+    html += buildCard(card_3, 2);
+    html += `</tr></table>`;
 
     // Insert into page
     dispCards.innerHTML = html;
