@@ -1111,7 +1111,7 @@ function displayTeamCards(cards, team) {
     card_2 = cards[1];
     card_3 = cards[2];
 
-    const clickable = (myRole === "picker");   // <-- IMPORTANT
+    const clickable = (myRole === "picker" || myRole === "both");   // <-- IMPORTANT
 
     let getCardHTML = (card, index) => {
         return `
