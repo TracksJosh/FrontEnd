@@ -1108,7 +1108,7 @@ function displayTeamCards(cards, team) {
     card_3 = cards[2];
 
     const isAnswerer = myRole.includes("answerer");
-    const clickable = myRole.includes("picker") || myRole.includes("solo");
+    const clickable = myRole.includes("picker") || myRole.includes("both");
 
     function buildCard(card, index) {
         const identifier = card[0];
