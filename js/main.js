@@ -1109,7 +1109,7 @@ function displayTeamCards(cards, team) {
 
     const myRole = localStorage.getItem("role") || "";
     const isAnswerer = myRole.includes("answerer");
-    const clickable = myRole.includes("picker");
+    const clickable = myRole.includes("picker") || myRole.includes("solo");
 
     function buildCard(card, index) {
         const identifier = card[0];
