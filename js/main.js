@@ -1118,10 +1118,12 @@ function displayTeamCards(cards, team) {
         const difficultyText = isAnswerer ? "" : `<br>${difficulty}`;
 
         const onclick = clickable ? `onclick="selectCard(${index})"` : "";
+		
+		const disabled = isAnswerer ? "": "disabled-card";
 
         return `
         <td>
-            <p class="card" ${onclick}>
+            <p class="card ${disabled}" ${onclick}>
                 <img class="${identifier}" src="img/${identifier}.png"><br>
                 ${category}
                 ${difficultyText}
