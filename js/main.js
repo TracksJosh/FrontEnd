@@ -130,39 +130,39 @@ async function startCardGame(ti)
 }
 
 async function selectCard(id) {
-
-    const canPick = (myRole === "picker" || myRole === "both");
-
-    if (!canPick) {
-        console.warn("You are not allowed to pick a card (answerer role).");
+    if (!(myRole === "picker" || myRole === "both")) {
+        console.warn("You are not allowed to pick a card.");
         return;
     }
 
-    const dispTeam = document.getElementById("team");
-    let team = dispTeam.innerHTML;
+    const team = myTeam;
+    let card_id = 0;
 
-    let question_id = 0;
     switch(id) {
-        case 0: question_id = card_1[3]; break;
-        case 1: question_id = card_2[3]; break;
-        case 2: question_id = card_3[3]; break;
+        case 0: card_id = card_1[3]; break;
+        case 1: card_id = card_2[3]; break;
+        case 2: card_id = card_3[3]; break;
     }
 
-    let response = await fetch(heroku + "/pickcard", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            "card": id,
-            "game_id": game_id,
-            "question_id": question_id,
-            "team": team,
-			"role": myRole
-        })
-    });
+    try {
+        const response = await fetch(`${heroku}/pickcard`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                card: id,
+                game_id: game_id,
+                team: team
+            })
+        });
 
-    let data = await response.json();
-    console.log("pickcard response", data);
+        const data = await response.json();
+        if (data.status !== "ok") {
+            console.error("Failed to pick card:", data.error);
+        }
 
+    } catch (err) {
+        console.error("Error picking card:", err);
+    }
 }
 
 async function startGame()
@@ -1027,7 +1027,12 @@ function setupWebSocketHandlers() {
 			console.log("My team:", myTeam);
 		}
 		if (data.type === "question") {
-			displayQuestion(data);
+            displayQuestion(data);
+
+            if (myRole === "answerer" || myRole === "both") {
+                displayAns(data, document.getElementById("webapp"));
+            }
+            break;
 		}
     };
 
