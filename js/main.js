@@ -1095,7 +1095,7 @@ function displayTeamCards(cards, team) {
 
         const onclick = clickable ? `onclick="selectCard(${index})"` : "";
 		
-		const disabled = isAnswerer ? "disabled-card": "";
+		const disabled = clickable ? "": "disabled-card";
 
         return `
         <td>
