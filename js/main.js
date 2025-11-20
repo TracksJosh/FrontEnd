@@ -1032,7 +1032,6 @@ function setupWebSocketHandlers() {
             if (myRole === "answerer" || myRole === "both") {
                 displayAns(data, document.getElementById("webapp"));
             }
-            break;
 		}
     };
 
