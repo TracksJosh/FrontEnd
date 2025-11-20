@@ -1010,21 +1010,16 @@ function setupWebSocketHandlers() {
 			displayTeamCards(data.cards, data.team);
 		}
 		if (data.type === "teams_assigned") {
-			const teams = data.teams;
-
-			myTeam = null;
-			myRole = null;
-			let index = 0;
-			for (const [teamName, members] of Object.entries(teams)) {
+			for (const [teamName, members] of Object.entries(data.teams)) {
 				if (members.includes(user)) {
 					myTeam = { name: teamName, members: members };
-					index = members.indexOf(user);
+					const index = members.indexOf(user);
 					if (members.length === 1) myRole = "both";
 					else if (index === 0) myRole = "picker";
 					else myRole = "answerer";
 				}
 			}
-			console.log("My team:", myTeam);
+			console.log("My team:", myTeam, "Role:", myRole);
 		}
 		if (data.type === "question") {
             displayQuestion(data);
