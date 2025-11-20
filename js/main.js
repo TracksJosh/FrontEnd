@@ -155,7 +155,8 @@ async function selectCard(id) {
             "card": id,
             "game_id": game_id,
             "question_id": question_id,
-            "team": team
+            "team": team,
+			"role": myRole
         })
     });
 
