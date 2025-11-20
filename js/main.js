@@ -140,25 +140,17 @@ async function selectCard(id) {
 
     const dispTeam = document.getElementById("team");
     let team = dispTeam.innerHTML;
-    question_id = 0;
 
+    let question_id = 0;
     switch(id) {
-        case 0:
-            question_id = card_1[3];
-            break;
-        case 1:
-            question_id = card_2[3];
-            break;
-        case 2:
-            question_id = card_3[3];
-            break;
+        case 0: question_id = card_1[3]; break;
+        case 1: question_id = card_2[3]; break;
+        case 2: question_id = card_3[3]; break;
     }
 
     let response = await fetch(heroku + "/pickcard", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             "card": id,
             "game_id": game_id,
@@ -168,28 +160,8 @@ async function selectCard(id) {
     });
 
     let data = await response.json();
-    console.log(data["question"]);
+    console.log("pickcard response", data);
 
-    categoryTemp = data["question"]["category"];
-
-    var webapp = document.getElementById("webapp");
-
-    if (typeof data.leadin === undefined || data.leadin === null) {
-        question.leadin = "";
-    }
-
-    webapp.innerHTML = `
-        <p id="team">${team}</p>
-        <div id="time"></div>
-        <h5 id="score">Score: ${score}</h5>
-        <p id="leadin">${data["question"].leadin}</p>
-        <p>${data["question"].question}</p>
-    `;
-
-    displayAns(data, webapp);
-
-    var sco = document.getElementById("score");
-    sco.innerHTML = "Score: " + score;
 }
 
 async function startGame()
@@ -1053,6 +1025,9 @@ function setupWebSocketHandlers() {
 			}
 			console.log("My team:", myTeam);
 		}
+		if (data.type === "question") {
+			displayQuestion(data);
+		}
     };
 
     ws.onopen = function() {
@@ -1142,6 +1117,29 @@ function displayTeamCards(cards, team) {
     `;
 
     dispCards.innerHTML = html;
+}
+
+function displayQuestion(msg) {
+
+    const webapp = document.getElementById("webapp");
+
+    const { question, leadin, answers } = msg;
+
+    const isPicker = (myRole === "picker" || myRole === "both");
+
+    webapp.innerHTML = `
+        <p id="team">${team}</p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${score}</h5>
+        <p id="leadin">${leadin || ""}</p>
+        <p>${question}</p>
+    `;
+
+    if (!isPicker) {
+        displayAns({ question: { answers: answers } }, webapp);
+    }
+
+    document.getElementById("score").innerText = "Score: " + score;
 }
 
 
