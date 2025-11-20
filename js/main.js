@@ -1010,6 +1010,7 @@ function setupWebSocketHandlers() {
 			displayTeamCards(data.cards, data.team);
 		}
 		if (data.type === "teams_assigned") {
+			console.log("Test Test 123");
 			for (const [teamName, members] of Object.entries(data.teams)) {
 				if (members.includes(user)) {
 					myTeam = { name: teamName, members: members };
