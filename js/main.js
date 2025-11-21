@@ -1026,6 +1026,10 @@ function setupWebSocketHandlers() {
 		}
 		if (data.type === "question") {
             displayQuestion(data);
+			console.log("question")
+            if (myRole === "answerer" || myRole === "both") {
+                displayAns(data, document.getElementById("webapp"));
+            }
 		}
     };
 
