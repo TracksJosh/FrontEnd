@@ -1140,10 +1140,6 @@ function displayQuestion(msg) {
         <p>${questionText}</p>
     `;
 
-    if (!isPicker) {
-        displayAns(msg, webapp);
-    }
-
     document.getElementById("score").innerText = "Score: " + score;
 }
 
