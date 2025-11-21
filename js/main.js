@@ -1127,20 +1127,22 @@ function displayQuestion(msg) {
 
     const webapp = document.getElementById("webapp");
 
-    const { question, leadin, answers } = msg;
-
+    const leadin = msg.leadin || "";
+    const questionText = msg.question.text;
+    const answers = msg.question;
+	const team = myTeam;
     const isPicker = (myRole === "picker" || myRole === "both");
 
     webapp.innerHTML = `
         <p id="team">${team}</p>
         <div id="time"></div>
         <h5 id="score">Score: ${score}</h5>
-        <p id="leadin">${leadin || ""}</p>
-        <p>${question}</p>
+        <p id="leadin">${leadin}</p>
+        <p>${questionText}</p>
     `;
 
     if (!isPicker) {
-        displayAns({ question: { answers: answers } }, webapp);
+        displayAns(msg, webapp);
     }
 
     document.getElementById("score").innerText = "Score: " + score;
