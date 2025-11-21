@@ -1133,7 +1133,7 @@ function displayQuestion(msg) {
     const isPicker = (myRole === "picker" || myRole === "both");
 
     webapp.innerHTML = `
-        <p id="team">${team}</p>
+        <p id="team">${team.name}</p>
         <div id="time"></div>
         <h5 id="score">Score: ${score}</h5>
         <p id="leadin">${leadin}</p>
