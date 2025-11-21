@@ -971,6 +971,8 @@ function setupWebSocketHandlers() {
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
         
+		console.log(data.type);
+		
         if (data.type === "players_update") {
             // This is called when the full player list is broadcast
             loadlobby(null, null, data.players);
