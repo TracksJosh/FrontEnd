@@ -1127,8 +1127,8 @@ function displayQuestion(msg) {
 
     const webapp = document.getElementById("webapp");
 	
-    const leadin = msg.leadin || "";
-    const questionText = msg.question.text;
+    const leadin = msg.question.leadin || "";
+    const questionText = msg.question.question;
 	const team = myTeam;
     const isPicker = (myRole === "picker" || myRole === "both");
 
