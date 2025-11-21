@@ -225,24 +225,6 @@ async function selectAnswer(ans, id) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({"answer": ans, "question": id, "game_id": game_id, "team": team, "leadin": leadin, "category": category, "user": user})
     });
-    let data = await response.json();
-    if (data.status == "correct")
-	{
-		score += 10;
-		correct += 1;
-	}
-    else
-	{
-		score -= 5;
-		alert(ans.explanation)
-	}
-
-    document.getElementById("score").innerHTML = "Score: " + score;
-    if (data.team_cards) {
-        // Update the UI with new cards
-		console.log("Team cards received after answer:", data.team_cards);
-        displayTeamCards(data.team_cards, team);
-    }
 }
 
 async function inputAnswer(answer, data2)
@@ -1030,6 +1012,22 @@ function setupWebSocketHandlers() {
             if (myRole === "answerer" || myRole === "both") {
                 displayAns(data, document.getElementById("webapp"));
             }
+		}
+		if (data.type === "answer_result") {
+			console.log("Answer result received:", data);
+
+			if (data.status == "correct")
+			{
+				score += 10;
+				correct += 1;
+			}
+			else
+			{
+				score -= 5;
+				if(myRole === "answerer" || myRole === "both") alert(data.explanation)
+			}
+			document.getElementById("score").innerHTML = "Score: " + score;
+			displayTeamCards(data.team_cards, data.team);
 		}
     };
 
