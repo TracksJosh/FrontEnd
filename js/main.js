@@ -1027,7 +1027,7 @@ function setupWebSocketHandlers() {
 				if(myRole === "answerer" || myRole === "both") alert(data.explanation)
 			}
 			document.getElementById("score").innerHTML = "Score: " + score;
-			displayTeamCards(data.team_cards, data.team);
+			displayTeamCards(data.team_cards);
 		}
     };
 
@@ -1074,6 +1074,59 @@ function displayTeamCards(cards, team) {
     
     const dispTeam = document.getElementById("team");
     dispTeam.innerHTML = team;
+
+    const dispCards = document.getElementById("cards");
+    if (!dispCards) return;
+
+    console.log("displayTeamCards "+ cards)
+
+    card_1 = cards[0];
+    card_2 = cards[1];
+    card_3 = cards[2];
+
+    const isAnswerer = myRole.includes("answerer");
+    const clickable = myRole.includes("picker") || myRole.includes("both");
+
+    function buildCard(card, index) {
+        const identifier = card[0];
+        const category = card[1];
+        const difficulty = card[2];
+        
+        const difficultyText = isAnswerer ? "" : `<br>${difficulty}`;
+
+        const onclick = clickable ? `onclick="selectCard(${index})"` : "";
+		
+		const disabled = isAnswerer ? "disabled-card": "";
+
+        return `
+        <td>
+            <p class="card ${disabled}" ${onclick}>
+                <img class="${identifier}" src="img/${identifier}.png"><br>
+                ${category}
+                ${difficultyText}
+            </p>
+        </td>`;
+    }
+
+    let html = `
+        <table>
+            <tr>
+                ${buildCard(card_1, 0)}
+                ${buildCard(card_2, 1)}
+                ${buildCard(card_3, 2)}
+            </tr>
+        </table>
+    `;
+
+    dispCards.innerHTML = html;
+}
+
+function displayTeamCards(cards) {
+    const webapp = document.getElementById("webapp");
+    webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
+    
+    const dispTeam = document.getElementById("team");
+    dispTeam.innerHTML = myTeam.name;
 
     const dispCards = document.getElementById("cards");
     if (!dispCards) return;
