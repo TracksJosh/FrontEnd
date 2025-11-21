@@ -1141,6 +1141,7 @@ function displayQuestion(msg) {
     `;
 
     document.getElementById("score").innerText = "Score: " + score;
+	categoryTemp = msg.question.category;
 }
 
 
