@@ -1126,10 +1126,9 @@ function displayTeamCards(cards, team) {
 function displayQuestion(msg) {
 
     const webapp = document.getElementById("webapp");
-
+	
     const leadin = msg.leadin || "";
     const questionText = msg.question.text;
-    const answers = msg.question;
 	const team = myTeam;
     const isPicker = (myRole === "picker" || myRole === "both");
 
