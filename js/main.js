@@ -700,31 +700,26 @@ async function setCountdown()
 		}
 	}
 }
-async function timeRanOut()
-{
-	let webapp = document.getElementById("webapp");
-    if(score <= 0)
-	{
-		webapp.innerHTML = `<p id="team"></p><div id="time"></div>
-					 <h5 id="score">Score: ${score}</h5>
-                     <p id="leadin"></p>
-                     <p>Sorry, you lost :(</p>`;
-	}
-	else
-	{
-		webapp.innerHTML = `<p id="team"></p><div id="time"></div>
-					 <h5 id="score">Score: ${score}</h5>
-                     <p id="leadin"></p>
-                     <p>Congrats!! You win<br>YIPPEE!!</p>`;
-	}
+async function timeRanOut() {
+
+    socket.send(JSON.stringify({
+        type: "end_game",
+        game_id: game_id,
+        team: myTeam.name
+    }));
 
 
-    document.getElementById("score").innerHTML = "Score: " + score;
+    gameOver = true;
 
-    // Show next set of answers
-    istarttime = Date.now();
-	endtime = Date.now();
-    setTimeout(() => location.reload(), 5000);
+
+    let webapp = document.getElementById("webapp");
+    webapp.innerHTML = `
+        <p id="team"></p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${score}</h5>
+        <p id="leadin"></p>
+        <p>Calculating results...</p>
+    `;
 }
 
 async function joingame()
@@ -1029,6 +1024,13 @@ function setupWebSocketHandlers() {
 			document.getElementById("score").innerHTML = "Score: " + score;
 			displayTeamCards(data.team_cards);
 		}
+		if (data.type === "you_win") {
+			showServerWin(data);
+		}
+
+		if (data.type === "you_lose") {
+			showServerLose(data);
+		}
     };
 
     ws.onopen = function() {
@@ -1209,3 +1211,34 @@ window.addEventListener("beforeunload", () => {
 });
 
 
+function showServerWin(data) {
+    let webapp = document.getElementById("webapp");
+
+    webapp.innerHTML = `
+        <p id="team">${data.team}</p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${data.score}</h5>
+        <p id="leadin"></p>
+        <p>Congrats!! You win<br>YIPPEE!!</p>
+        <p>Winning Score: ${data.winning_score}</p>
+        <p>Winning Team(s): ${data.winners.join(", ")}</p>
+    `;
+
+    setTimeout(() => location.reload(), 5000);
+}
+
+function showServerLose(data) {
+    let webapp = document.getElementById("webapp");
+
+    webapp.innerHTML = `
+        <p id="team">${data.team}</p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${data.score}</h5>
+        <p id="leadin"></p>
+        <p>Sorry, you lost :(</p>
+        <p>Winning Score: ${data.winning_score}</p>
+        <p>Winning Team(s): ${data.winners.join(", ")}</p>
+    `;
+
+    setTimeout(() => location.reload(), 5000);
+}
