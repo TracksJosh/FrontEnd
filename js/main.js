@@ -1023,11 +1023,11 @@ function setupWebSocketHandlers() {
 			document.getElementById("score").innerHTML = "Score: " + score;
 			displayTeamCards(data.team_cards);
 		}
-		if (data.type === "you_win") {
+		if (data.type === "game_win") {
 			showServerWin(data);
 		}
 
-		if (data.type === "you_lose") {
+		if (data.type === "game_lose") {
 			showServerLose(data);
 		}
     };
