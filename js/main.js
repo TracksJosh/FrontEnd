@@ -702,10 +702,9 @@ async function setCountdown()
 }
 async function timeRanOut() {
 
-    socket.send(JSON.stringify({
+    ws.send(JSON.stringify({
         type: "end_game",
-        game_id: game_id,
-        team: myTeam.name
+        game_id: game_id
     }));
 
 
