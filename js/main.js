@@ -1214,10 +1214,6 @@ function showServerWin(data) {
     let webapp = document.getElementById("webapp");
 
     webapp.innerHTML = `
-        <p id="team">${data.team}</p>
-        <div id="time"></div>
-        <h5 id="score">Score: ${data.score}</h5>
-        <p id="leadin"></p>
         <p>Congrats!! You win<br>YIPPEE!!</p>
         <p>Winning Score: ${data.winning_score}</p>
         <p>Winning Team(s): ${data.winners.join(", ")}</p>
@@ -1230,10 +1226,6 @@ function showServerLose(data) {
     let webapp = document.getElementById("webapp");
 
     webapp.innerHTML = `
-        <p id="team">${data.team}</p>
-        <div id="time"></div>
-        <h5 id="score">Score: ${data.score}</h5>
-        <p id="leadin"></p>
         <p>Sorry, you lost :(</p>
         <p>Winning Score: ${data.winning_score}</p>
         <p>Winning Team(s): ${data.winners.join(", ")}</p>
