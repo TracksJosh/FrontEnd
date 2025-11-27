@@ -27,6 +27,7 @@ let canPick = false;
 let canAnswer = false;
 let myTeam = null;
 let myRole = null;
+let isHost = false;
 
 function checkAll()
 {
@@ -625,6 +626,7 @@ async function host()
 		});
 		let data = await response.json();
 		webapp.innerHTML = data["html"];
+		host = true;
 	}
 }
 
@@ -702,10 +704,13 @@ async function setCountdown()
 }
 async function timeRanOut() {
 
-    ws.send(JSON.stringify({
-        type: "end_game",
-        game_id: game_id
-    }));
+    if(host)
+	{
+		ws.send(JSON.stringify({
+			type: "end_game",
+			game_id: game_id
+		}));
+	}
 
 
     gameOver = true;
