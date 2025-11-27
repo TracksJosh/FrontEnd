@@ -738,6 +738,7 @@ async function joingame()
 	});
 	let data = await response.json();
 	webapp.innerHTML = data["html"];
+	host = false;
 }
 
 async function joinGame() {
