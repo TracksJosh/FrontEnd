@@ -221,7 +221,8 @@ function displayAns2() {
 	answers = currentAnswers;
 	answers = shuffleArray(answers);
 	console.log(answers);
-
+	
+	let que = document.getElementById("webapp");
 	answers.forEach(ans => {
 		let btn = document.createElement("button");
 		btn.innerHTML = ans.text;  // use the text property
