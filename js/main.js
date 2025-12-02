@@ -1076,7 +1076,7 @@ function setupWebSocketHandlers() {
 			}
 			else
 			{
-				displayQuestion(currentQuestion);
+				displayQuestion2();
 					if (myRole === "answerer" || myRole === "both") {
 					displayAns2();
 				}
@@ -1266,7 +1266,7 @@ function displayQuestion(msg, hi) {
 	categoryTemp = msg.question.category;
 }
 
-function displayQuestion(currentQuestion) {
+function displayQuestion2() {
 
     const webapp = document.getElementById("webapp");
 	console.log(currentQuestion);
