@@ -1248,6 +1248,7 @@ function displayQuestion(msg, hi) {
 	
 	
 	currentQuestion = msg.question;
+	console.log(currentQuestion);
     const leadin = msg.question.leadin || "";
     const questionText = msg.question.question;
 	const team = myTeam;
