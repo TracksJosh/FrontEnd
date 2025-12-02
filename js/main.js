@@ -1270,8 +1270,8 @@ function displayQuestion2() {
 
     const webapp = document.getElementById("webapp");
 	console.log(currentQuestion);
-    const leadin = currentQuestion.question.leadin || "";
-    const questionText = currentQuestion.question.question;
+    const leadin = currentQuestion.leadin || "";
+    const questionText = currentQuestion.question;
 	const team = myTeam;
     const isPicker = (myRole === "picker" || myRole === "both");
 
@@ -1284,7 +1284,7 @@ function displayQuestion2() {
     `;
 
     document.getElementById("score").innerText = "Score: " + score;
-	categoryTemp = currentQuestion.question.category;
+	categoryTemp = currentQuestion.category;
 }
 
 
