@@ -1268,7 +1268,7 @@ function displayQuestion(msg, hi) {
 function displayQuestion(currentQuestion) {
 
     const webapp = document.getElementById("webapp");
-	
+	console.log(currentQuestion);
     const leadin = currentQuestion.leadin || "";
     const questionText = currentQuestion.question;
 	const team = myTeam;
@@ -1283,7 +1283,7 @@ function displayQuestion(currentQuestion) {
     `;
 
     document.getElementById("score").innerText = "Score: " + score;
-	categoryTemp = msg.question.category;
+	categoryTemp = currentQuestion.category;
 }
 
 
