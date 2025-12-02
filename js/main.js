@@ -208,12 +208,16 @@ function displayAns(data, que) {
 	answers = shuffleArray(answers);
 	console.log(answers);
 
-	answers.forEach(ans => {
-		let btn = document.createElement("button");
-		btn.innerHTML = ans.text;  // use the text property
-		btn.onclick = () => selectAnswer(ans, data["question"]._id);
-		que.appendChild(btn);
-	});
+	if (myRole === "answerer" || myRole === "both") {
+        answers.forEach(ans => {
+			let btn = document.createElement("button");
+			btn.innerHTML = ans.text;  // use the text property
+			btn.onclick = () => selectAnswer(ans, data["question"]._id);
+			que.appendChild(btn);
+		});
+    }
+
+	
 }
 
 function displayAns2() {
@@ -222,12 +226,14 @@ function displayAns2() {
 	console.log(answers);
 	
 	let que = document.getElementById("webapp");
-	answers.forEach(ans => {
-		let btn = document.createElement("button");
-		btn.innerHTML = ans.text;  // use the text property
-		btn.onclick = () => selectAnswer(ans, data["question"]._id);
-		que.appendChild(btn);
-	});
+	if (myRole === "answerer" || myRole === "both") {
+        answers.forEach(ans => {
+			let btn = document.createElement("button");
+			btn.innerHTML = ans.text;  // use the text property
+			btn.onclick = () => selectAnswer(ans, data["question"]._id);
+			que.appendChild(btn);
+		});
+    }
 }
 
 function getDistractors(data) {
@@ -1029,9 +1035,8 @@ function setupWebSocketHandlers() {
 		if (data.type === "question") {
             displayQuestion(data, "");
 			console.log("question")
-            if (myRole === "answerer" || myRole === "both") {
-                displayAns(data, document.getElementById("webapp"));
-            }
+			displayAns(data, document.getElementById("webapp"));
+            
 		}
 		if (data.type === "answer_result") {
 			console.log("Answer result received:", data);
@@ -1078,9 +1083,7 @@ function setupWebSocketHandlers() {
 			else
 			{
 				displayQuestion2();
-					if (myRole === "answerer" || myRole === "both") {
-					displayAns2();
-				}
+				displayAns2();
 			}
 			
 			if (webapp) {
