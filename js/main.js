@@ -230,7 +230,7 @@ function displayAns2() {
         answers.forEach(ans => {
 			let btn = document.createElement("button");
 			btn.innerHTML = ans.text;  // use the text property
-			btn.onclick = () => selectAnswer(ans, data["question"]._id);
+			btn.onclick = () => selectAnswer(ans, currentQuestion._id);
 			que.appendChild(btn);
 		});
     }
