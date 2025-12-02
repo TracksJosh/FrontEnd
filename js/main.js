@@ -28,6 +28,9 @@ let canAnswer = false;
 let myTeam = null;
 let myRole = null;
 let isHost = false;
+let card_1 = null;
+let card_2 = null;
+let card_3 = null;
 
 function checkAll()
 {
@@ -1050,7 +1053,7 @@ function setupWebSocketHandlers() {
 				myRole = "answerer";
 			}
 			
-			updateRoleUI();
+			displayTeamCards([card_1, card_2, card_3]);
 			
 			if (webapp) {
 				
