@@ -1036,6 +1036,37 @@ function setupWebSocketHandlers() {
 		if (data.type === "game_lose") {
 			showServerLose(data);
 		}
+		if (data.type === "halftime") 
+		{
+			console.log("Halftime reached!");
+
+			const webapp = document.getElementById("webapp");
+			if (myRole === "answerer") 
+			{
+				myRole = "picker";
+			} 
+			else if (myRole === "picker") 
+			{
+				myRole = "answerer";
+			}
+			
+			updateRoleUI();
+			
+			if (webapp) {
+				
+				const msg = document.createElement("div");
+				msg.className = "halftime-banner";
+				msg.innerHTML = `
+					<div class="halftime-message">
+						<h2>🎉 Halftime!</h2>
+						<p>The game is halfway over. Keep going!</p>
+					</div>
+				`;
+				webapp.appendChild(msg);
+
+				setTimeout(() => msg.remove(), 5000);
+			}
+		}
     };
 
     ws.onopen = function() {
@@ -1238,4 +1269,31 @@ function showServerLose(data) {
     `;
 
     setTimeout(() => location.reload(), 5000);
+}
+
+function updateRoleUI() {
+    console.log("Updating UI for role:", myRole);
+
+    const cardElements = document.querySelectorAll(".card-option");
+    const submitBtn = document.getElementById("submit-answer-btn");
+
+    if (myRole === "picker") {
+        cardElements.forEach(card => {
+            card.classList.remove("disabled-card");
+            card.style.pointerEvents = "auto";
+            card.style.opacity = "1";
+        });
+
+        if (submitBtn) submitBtn.disabled = false;
+    }
+
+    else if (myRole === "answerer") {
+        cardElements.forEach(card => {
+            card.classList.add("disabled-card");
+            card.style.pointerEvents = "none";
+            card.style.opacity = "0.5";
+        });
+
+        if (submitBtn) submitBtn.disabled = true;
+    }
 }
