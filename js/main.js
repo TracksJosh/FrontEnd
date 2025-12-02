@@ -31,6 +31,8 @@ let isHost = false;
 let card_1 = null;
 let card_2 = null;
 let card_3 = null;
+let currentQuestion = null;
+let currentAnswers = null;
 
 function checkAll()
 {
@@ -202,6 +204,20 @@ function displayAns(data, que) {
 	console.log(distractorsArray);
 	correct = {"text": data["question"].correct_answer, "explanation": "Correct!"};
 	let answers = [correct, ...distractorsArray];
+	currentAnswers = answers;
+	answers = shuffleArray(answers);
+	console.log(answers);
+
+	answers.forEach(ans => {
+		let btn = document.createElement("button");
+		btn.innerHTML = ans.text;  // use the text property
+		btn.onclick = () => selectAnswer(ans, data["question"]._id);
+		que.appendChild(btn);
+	});
+}
+
+function displayAns(currentAnswers) {
+    answers = currentAnswers;
 	answers = shuffleArray(answers);
 	console.log(answers);
 
@@ -1053,7 +1069,18 @@ function setupWebSocketHandlers() {
 				myRole = "answerer";
 			}
 			
-			displayTeamCards([card_1, card_2, card_3]);
+			const isThereCard = document.getElementById("cards");
+			if(isThereCard)
+			{
+				displayTeamCards([card_1, card_2, card_3]);
+			}
+			else
+			{
+				displayQuestion(currentQuestion);
+					if (myRole === "answerer" || myRole === "both") {
+					displayAns(currentAnswers);
+				}
+			}
 			
 			if (webapp) {
 				
@@ -1216,6 +1243,29 @@ function displayTeamCards(cards) {
 }
 
 function displayQuestion(msg) {
+
+    const webapp = document.getElementById("webapp");
+	
+	
+	currentQuestion = msg.question;
+    const leadin = msg.question.leadin || "";
+    const questionText = msg.question.question;
+	const team = myTeam;
+    const isPicker = (myRole === "picker" || myRole === "both");
+
+    webapp.innerHTML = `
+        <p id="team">${team.name}</p>
+        <div id="time"></div>
+        <h5 id="score">Score: ${score}</h5>
+        <p id="leadin">${leadin}</p>
+        <p>${questionText}</p>
+    `;
+
+    document.getElementById("score").innerText = "Score: " + score;
+	categoryTemp = msg.question.category;
+}
+
+function displayQuestion(currentQuestion) {
 
     const webapp = document.getElementById("webapp");
 	
