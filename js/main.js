@@ -1026,7 +1026,7 @@ function setupWebSocketHandlers() {
 			console.log("My team:", myTeam, "Role:", myRole);
 		}
 		if (data.type === "question") {
-            displayQuestion(data);
+            displayQuestion(data, "");
 			console.log("question")
             if (myRole === "answerer" || myRole === "both") {
                 displayAns(data, document.getElementById("webapp"));
@@ -1242,7 +1242,7 @@ function displayTeamCards(cards) {
     dispCards.innerHTML = html;
 }
 
-function displayQuestion(msg) {
+function displayQuestion(msg, hi) {
 
     const webapp = document.getElementById("webapp");
 	
