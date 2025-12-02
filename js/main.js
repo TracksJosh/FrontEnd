@@ -1269,8 +1269,8 @@ function displayQuestion(currentQuestion) {
 
     const webapp = document.getElementById("webapp");
 	console.log(currentQuestion);
-    const leadin = currentQuestion.leadin || "";
-    const questionText = currentQuestion.question;
+    const leadin = currentQuestion.question.leadin || "";
+    const questionText = currentQuestion.question.question;
 	const team = myTeam;
     const isPicker = (myRole === "picker" || myRole === "both");
 
@@ -1283,7 +1283,7 @@ function displayQuestion(currentQuestion) {
     `;
 
     document.getElementById("score").innerText = "Score: " + score;
-	categoryTemp = currentQuestion.category;
+	categoryTemp = currentQuestion.question.category;
 }
 
 
