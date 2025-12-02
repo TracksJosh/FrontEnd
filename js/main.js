@@ -217,7 +217,8 @@ function displayAns(data, que) {
 }
 
 function displayAns2() {
-    answers = currentAnswers;
+    console.log(currentAnswers);
+	answers = currentAnswers;
 	answers = shuffleArray(answers);
 	console.log(answers);
 
