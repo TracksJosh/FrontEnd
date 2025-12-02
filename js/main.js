@@ -216,7 +216,7 @@ function displayAns(data, que) {
 	});
 }
 
-function displayAns() {
+function displayAns2() {
     answers = currentAnswers;
 	answers = shuffleArray(answers);
 	console.log(answers);
@@ -1078,7 +1078,7 @@ function setupWebSocketHandlers() {
 			{
 				displayQuestion(currentQuestion);
 					if (myRole === "answerer" || myRole === "both") {
-					displayAns();
+					displayAns2();
 				}
 			}
 			
