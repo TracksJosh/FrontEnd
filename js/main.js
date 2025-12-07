@@ -654,7 +654,7 @@ async function host()
 		});
 		let data = await response.json();
 		webapp.innerHTML = data["html"];
-		host = true;
+		isHost = true;
 	}
 }
 
@@ -737,7 +737,7 @@ async function setCountdown()
 }
 async function timeRanOut() {
 
-    if(host)
+    if(isHost)
 	{
 		ws.send(JSON.stringify({
 			type: "end_game",
@@ -771,7 +771,7 @@ async function joingame()
 	});
 	let data = await response.json();
 	webapp.innerHTML = data["html"];
-	host = false;
+	isHost = false;
 }
 
 async function joinGame() {
@@ -1365,6 +1365,15 @@ function updateRoleUI() {
 
 async function genStats()
 {
-	
+	const webapp = document.getElementById("webapp");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "stat_gen"})
+	});
+	let data = await response.json();
+	webapp.innerHTML = data.html;
 	
 }
