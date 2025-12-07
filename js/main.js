@@ -20,6 +20,7 @@ var endtime;
 var timestring;
 let lobbyHTML = null;
 let lobbyLoaded = false;
+let loggedIn = false;
 let categoriesSet = false;
 let heartbeatInterval;
 let categoryTemp;
@@ -27,7 +28,6 @@ let canPick = false;
 let canAnswer = false;
 let myTeam = null;
 let myRole = null;
-let isHost = false;
 let card_1 = null;
 let card_2 = null;
 let card_3 = null;
@@ -536,6 +536,7 @@ async function login()
 		const webapp = document.getElementById("webapp");
 		webapp.innerHTML = `<h1 align=center>Welcome to Quivia!!</h1><h3 align=center>A Quick Team Trivia Game That Tests Your Teammate's Knowledge and Your Ability to Pick the Best Questions!</h3><br><br><h3 align=center>You have successfully logged in!!</h3>`;
 		user = username;
+		loggedIn = true;
 		const expires = new Date();
         expires.setDate(expires.getDate() + 1);
         document.cookie = `session_token=${data.token}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Lax`;
@@ -574,6 +575,7 @@ async function logout()
 	{
 		alert("You have successfully logged off.");
 		user = "";
+		loggedIn = false;
 		document.cookie = "session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		loadmain();
 	}
@@ -636,7 +638,7 @@ async function loadmain()
 
 async function host()
 {
-	if(user == "")
+	if(!loggedIn)
 	{
 		showHostAlert();
 	}
@@ -669,8 +671,13 @@ async function loaduser()
 	let data = await response.json();
 	webapp.innerHTML = data["html"];
 	const loginout = document.getElementById("loginout");
-	if(user.length == 0) loginout.innerHTML += `<button class="mainPageButton" onclick="loadlogin()">LOG IN</button>`;
-	else loginout.innerHTML += `<button class="mainPageButton" onclick="logout()">LOG OUT</button>`;
+	const userstat = document.getElementById("userstat");
+	if(!loggedIn) loginout.innerHTML += `<button class="mainPageButton" onclick="loadlogin()">LOG IN</button>`;
+	else
+	{
+		loginout.innerHTML += `<button class="mainPageButton" onclick="logout()">LOG OUT</button>`;
+		userstat.innerHTML += `<button class="mainPageButton" onclick="genStats()">USER STATS</button>`;
+	}
 }
 
 function playchecklogin()
@@ -1354,4 +1361,10 @@ function updateRoleUI() {
 
         if (submitBtn) submitBtn.disabled = true;
     }
+}
+
+async function genStats()
+{
+	
+	
 }
