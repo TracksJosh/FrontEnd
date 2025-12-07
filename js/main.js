@@ -1391,7 +1391,7 @@ async function genStats()
 	stats.innerHTML += `<p>Total Points: `+genData["stats"]["cumulated_points"]+`</p>`;
 }
 
-async function openStats()
+async function statOpen()
 {
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
