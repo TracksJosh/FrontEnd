@@ -1440,3 +1440,59 @@ async function statOpen()
 	stats.innerHTML += `<p>Entertainment: Cartoon & Animations Points: `+genData["stats"]["cumulative_54_points"]+`</p>`;
 	
 }
+
+async function statQB()
+{
+	const webapp = document.getElementById("webapp");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "stat_qb"})
+	});
+	let data = await response.json();
+	webapp.innerHTML = data.html;
+	let general = await fetch(heroku+"/qb_stat", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"username": user})
+	});
+	let genData = await general.json();
+	
+	const stats = document.getElementById("stats");
+	stats.innerHTML += `<p>QBReader Points: `+genData["stats"]["cumulative_opentdb_points"]+`</p>`;
+	stats.innerHTML += `<p>American Literature Points: `+genData["stats"]["cumulative_0_points"]+`</p>`;
+	stats.innerHTML += `<p>British Literature Points: `+genData["stats"]["cumulative_1_points"]+`</p>`;
+	stats.innerHTML += `<p>European Literature Points: `+genData["stats"]["cumulative_3_points"]+`</p>`;
+	stats.innerHTML += `<p>World Literature Points: `+genData["stats"]["cumulative_4_points"]+`</p>`;
+	stats.innerHTML += `<p>Other Literature Points: `+genData["stats"]["cumulative_5_points"]+`</p>`;
+	stats.innerHTML += `<p>American History Points: `+genData["stats"]["cumulative_6_points"]+`</p>`;
+	stats.innerHTML += `<p>Ancient History Points: `+genData["stats"]["cumulative_7_points"]+`</p>`;
+	stats.innerHTML += `<p>European History Points: `+genData["stats"]["cumulative_8_points"]+`</p>`;
+	stats.innerHTML += `<p>World History Points: `+genData["stats"]["cumulative_9_points"]+`</p>`;
+	stats.innerHTML += `<p>Other History Points: `+genData["stats"]["cumulative_10_points"]+`</p>`;
+	stats.innerHTML += `<p>Biology Points: `+genData["stats"]["cumulative_11_points"]+`</p>`;
+	stats.innerHTML += `<p>Chemistry Points: `+genData["stats"]["cumulative_12_points"]+`</p>`;
+	stats.innerHTML += `<p>Physics Points: `+genData["stats"]["cumulative_13_points"]+`</p>`;
+	stats.innerHTML += `<p>Other Science Points: `+genData["stats"]["cumulative_14_points"]+`</p>`;
+	stats.innerHTML += `<p>Visual Fine Arts Points: `+genData["stats"]["cumulative_15_points"]+`</p>`;
+	stats.innerHTML += `<p>Auditory Fine Arts Points: `+genData["stats"]["cumulative_16_points"]+`</p>`;
+	stats.innerHTML += `<p>Other Fine Arts Points: `+genData["stats"]["cumulative_17_points"]+`</p>`;
+	stats.innerHTML += `<p>Religion Points: `+genData["stats"]["cumulative_18_points"]+`</p>`;
+	stats.innerHTML += `<p>Mythology Points: `+genData["stats"]["cumulative_19_points"]+`</p>`;
+	stats.innerHTML += `<p>Philosophy Points: `+genData["stats"]["cumulative_20_points"]+`</p>`;
+	stats.innerHTML += `<p>Social Science Points: `+genData["stats"]["cumulative_21_points"]+`</p>`;
+	stats.innerHTML += `<p>Current Events Points: `+genData["stats"]["cumulative_22_points"]+`</p>`;
+	stats.innerHTML += `<p>Geography Points: `+genData["stats"]["cumulative_23_points"]+`</p>`;
+	stats.innerHTML += `<p>Other Academic Points: `+genData["stats"]["cumulative_24_points"]+`</p>`;
+	stats.innerHTML += `<p>Movies Points: `+genData["stats"]["cumulative_25_points"]+`</p>`;
+	stats.innerHTML += `<p>Music Points: `+genData["stats"]["cumulative_26_points"]+`</p>`;
+	stats.innerHTML += `<p>Sports Points: `+genData["stats"]["cumulative_27_points"]+`</p>`;
+	stats.innerHTML += `<p>Television Points: `+genData["stats"]["cumulative_28_points"]+`</p>`;
+	stats.innerHTML += `<p>Video Games Points: `+genData["stats"]["cumulative_29_points"]+`</p>`;
+	stats.innerHTML += `<p>Other Pop Culture Points: `+genData["stats"]["cumulative_30_points"]+`</p>`;
+	
+}
