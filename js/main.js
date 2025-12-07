@@ -1463,7 +1463,7 @@ async function statQB()
 	let genData = await general.json();
 	
 	const stats = document.getElementById("stats");
-	stats.innerHTML += `<p>QBReader Points: `+genData["stats"]["cumulative_opentdb_points"]+`</p>`;
+	stats.innerHTML += `<p>QBReader Points: `+genData["stats"]["cumulative_qbreader_points"]+`</p>`;
 	stats.innerHTML += `<p>American Literature Points: `+genData["stats"]["cumulative_0_points"]+`</p>`;
 	stats.innerHTML += `<p>British Literature Points: `+genData["stats"]["cumulative_1_points"]+`</p>`;
 	stats.innerHTML += `<p>European Literature Points: `+genData["stats"]["cumulative_3_points"]+`</p>`;
