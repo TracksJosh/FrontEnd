@@ -12,6 +12,12 @@ input{
 	height: 50px;
     line-height: 50px;
 }
+
+.mainPageButton{
+	width: 85px;
+	height: 85px;
+    line-height: 85px;
+}
 .button-container {
     display: grid;
     gap: 10px;
