@@ -14,7 +14,7 @@ input{
 }
 .button-container {
     display: grid;
-    gap: 10px;
+    gap: 1px;
 	place-items: center;
 }
 
