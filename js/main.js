@@ -1383,7 +1383,7 @@ async function genStats()
 			},
 			body: JSON.stringify({"username": user})
 	});
-	let genData = await response.json();
+	let genData = await general.json();
 	
 	const stats = document.getElementById("stats");
 	stats.innerHTML += `<p>Wins: `+genData["stats"]["wins"]+`</p>`;
