@@ -1376,5 +1376,17 @@ async function genStats()
 	});
 	let data = await response.json();
 	webapp.innerHTML = data.html;
+	let general = await fetch(heroku+"/gen_stat", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"username": user})
+	});
+	let genData = await response.json();
 	
+	const stats = document.getElementById("stats");
+	stats.innerHTML += `<p>Wins: `+genData["stats"]["wins"]+`</p>`;
+	stats.innerHTML += `<p>Losses: `+genData["stats"]["losses"]+`</p>`;
+	stats.innerHTML += `<p>Total Points: `+genData["stats"]["cumulated_points"]+`</p>`;
 }
