@@ -606,6 +606,7 @@ async function checkCookie()
 	if(data["status"] == "success")
 	{
 		user = data["username"];
+		loggedIn = true;
 	}
 	console.log(data);
 	loadmain();
