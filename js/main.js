@@ -1390,3 +1390,53 @@ async function genStats()
 	stats.innerHTML += `<p>Losses: `+genData["stats"]["losses"]+`</p>`;
 	stats.innerHTML += `<p>Total Points: `+genData["stats"]["cumulated_points"]+`</p>`;
 }
+
+async function openStats()
+{
+	const webapp = document.getElementById("webapp");
+	let response = await fetch(heroku+"/load", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"file": "stat_open"})
+	});
+	let data = await response.json();
+	webapp.innerHTML = data.html;
+	let general = await fetch(heroku+"/open_stat", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({"username": user})
+	});
+	let genData = await general.json();
+	
+	const stats = document.getElementById("stats");
+	stats.innerHTML += `<p>OpenTDB Points: `+genData["stats"]["cumulative_opentdb_points"]+`</p>`;
+	stats.innerHTML += `<p>General Knowledge Points: `+genData["stats"]["cumulative_31_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Books Points: `+genData["stats"]["cumulative_32_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Film Points: `+genData["stats"]["cumulative_33_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Music Points: `+genData["stats"]["cumulative_34_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Musicals & Theatres Points: `+genData["stats"]["cumulative_35_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Television Points: `+genData["stats"]["cumulative_36_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Video Games Points: `+genData["stats"]["cumulative_37_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Board Games Points: `+genData["stats"]["cumulative_38_points"]+`</p>`;
+	stats.innerHTML += `<p>Science & Nature Points: `+genData["stats"]["cumulative_39_points"]+`</p>`;
+	stats.innerHTML += `<p>Science: Computers Points: `+genData["stats"]["cumulative_40_points"]+`</p>`;
+	stats.innerHTML += `<p>Science: Mathematics Points: `+genData["stats"]["cumulative_41_points"]+`</p>`;
+	stats.innerHTML += `<p>Mythology Points: `+genData["stats"]["cumulative_42_points"]+`</p>`;
+	stats.innerHTML += `<p>Sports Points: `+genData["stats"]["cumulative_43_points"]+`</p>`;
+	stats.innerHTML += `<p>Geography Points: `+genData["stats"]["cumulative_44_points"]+`</p>`;
+	stats.innerHTML += `<p>History Points: `+genData["stats"]["cumulative_45_points"]+`</p>`;
+	stats.innerHTML += `<p>Politics Points: `+genData["stats"]["cumulative_46_points"]+`</p>`;
+	stats.innerHTML += `<p>Art Points: `+genData["stats"]["cumulative_47_points"]+`</p>`;
+	stats.innerHTML += `<p>Celebrities Points: `+genData["stats"]["cumulative_48_points"]+`</p>`;
+	stats.innerHTML += `<p>Animals Points: `+genData["stats"]["cumulative_49_points"]+`</p>`;
+	stats.innerHTML += `<p>Vehicles Points: `+genData["stats"]["cumulative_50_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Comics Points: `+genData["stats"]["cumulative_51_points"]+`</p>`;
+	stats.innerHTML += `<p>Science: Gadgets Points: `+genData["stats"]["cumulative_52_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Japanese Anime & Manga Points: `+genData["stats"]["cumulative_53_points"]+`</p>`;
+	stats.innerHTML += `<p>Entertainment: Cartoon & Animations Points: `+genData["stats"]["cumulative_54_points"]+`</p>`;
+	
+}
