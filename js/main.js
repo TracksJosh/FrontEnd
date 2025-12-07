@@ -36,6 +36,7 @@ let currentAnswers = null;
 
 function checkAll()
 {
+	// Checks all checkbox inputs
 	checks = document.getElementsByTagName("input");
 	for(var i=0; i<checks.length; i++) 
 	{
@@ -45,6 +46,7 @@ function checkAll()
 
 function invertCheck()
 {
+	// Inverts all checkbox inputs
 	checks = document.getElementsByTagName("input");
 	for(var i=0; i<checks.length; i++) 
 	{
@@ -54,6 +56,7 @@ function invertCheck()
 
 function uncheckAll()
 {
+	// Unchecks all checkbox inputs
 	checks = document.getElementsByTagName("input");
 	for(var i=0; i<checks.length; i++) 
 	{
@@ -63,6 +66,7 @@ function uncheckAll()
 
 async function submit()
 {
+	// Submits selected categories and time length to server
 	const minutes = parseInt(document.getElementById("minutesInput").value);
 
     if (isNaN(minutes) || minutes < 0) {
@@ -116,6 +120,7 @@ async function submit()
 
 async function startCardGame(ti)
 {
+	// Starts the game and gets the first set of cards
 	let response = await fetch(heroku+"/startcard", {
 			method: "POST",
 			headers: {
@@ -135,8 +140,11 @@ async function startCardGame(ti)
 	if(ti) setCountdown();
 }
 
-async function selectCard(id) {
-    if (!(myRole === "picker" || myRole === "both")) {
+async function selectCard(id) 
+{
+	// Selects a card and sends the choice to the server
+    if (!(myRole === "picker" || myRole === "both")) 
+{
         console.warn("You are not allowed to pick a card.");
         return;
     }
@@ -173,6 +181,7 @@ async function selectCard(id) {
 
 async function startGame()
 {
+	// Starts the game and gets the first question
 	let response = await fetch(heroku+"/start", {
 			method: "POST",
 			headers: {
@@ -189,7 +198,9 @@ async function startGame()
 	setCountdown();
 }
 
-function shuffleArray(array) {
+function shuffleArray(array) 
+{
+	// Shuffles the elements of an array in place
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
@@ -198,8 +209,10 @@ function shuffleArray(array) {
 }
 
 // Display answers as buttons
-function displayAns(data, que) {
-    let distractorsArray = getDistractors(data);
+function displayAns(data, que) 
+{
+	// Displays answer choices for the current question
+	let distractorsArray = getDistractors(data);
 	console.log(data["question"].correct_answer);
 	console.log(distractorsArray);
 	correct = {"text": data["question"].correct_answer, "explanation": "Correct!"};
@@ -220,7 +233,9 @@ function displayAns(data, que) {
 	
 }
 
-function displayAns2() {
+function displayAns2() 
+{
+	// Displays answer choices for the current question (alternative method)
 	console.log(currentAnswers);
 	let answers = shuffleArray([...currentAnswers]);
 	console.log(answers);
@@ -236,11 +251,15 @@ function displayAns2() {
     }
 }
 
-function getDistractors(data) {
+function getDistractors(data) 
+{
+	// Retrieves incorrect answer choices from question data
     return data["question"].incorrect_answers;
 }
 
-async function selectAnswer(ans, id) {
+async function selectAnswer(ans, id)
+{
+	// Sends the selected answer to the server
     const dispTeam = document.getElementById("team");
 	let team = dispTeam.innerHTML;
 	const dispLead = document.getElementById("leadin");
@@ -256,6 +275,7 @@ async function selectAnswer(ans, id) {
 
 async function inputAnswer(answer, data2)
 {
+	// Inputs the answer and gets the next question from the server
 	var ansBox = document.getElementById("answerBox"+data2.id);
 	id = ansBox.id.replace("answerBox", "");
 	console.log("Answer: "+answer);
@@ -297,6 +317,7 @@ async function inputAnswer(answer, data2)
 
 async function loadchecklist()
 {
+	// Loads the checklist from the server and displays it
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -316,6 +337,7 @@ async function loadchecklist()
 
 async function loadsignup()
 {
+	// Loads the signup page from the server and displays it
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -330,6 +352,7 @@ async function loadsignup()
 
 async function loadlogin()
 {
+	// Loads the login page from the server and displays it
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -344,6 +367,7 @@ async function loadlogin()
 
 function signup()
 {
+	// Validates signup input and registers the user
 	const us = document.getElementById("signup_user1");
 	const cu = document.getElementById("signup_user2");
 	const em = document.getElementById("signup_email1");
@@ -412,6 +436,7 @@ function signup()
 
 function emailFormatted(email)
 {
+	// Validates email format
     var temp = false;
     var alphabetCheck = false;
 	const regex = /^[A-Za-z0-9.-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$/;
@@ -439,7 +464,9 @@ function emailFormatted(email)
     return true;
 }
 
-function usernameFormatted(username) {
+function usernameFormatted(username) 
+{
+	// Validates username format
     const regex = /^[A-Za-z0-9]+$/;
     if (!regex.test(username)) {
         return false;
@@ -451,7 +478,9 @@ function usernameFormatted(username) {
     return true;
 }
 
-function passwordFormatted(password) {
+function passwordFormatted(password) 
+{
+	// Validates password format
     if (password.length < 8 || password.length > 16) {
         return false;
     }
@@ -468,7 +497,9 @@ function passwordFormatted(password) {
     return true;
 }
 
-async function hashString(str) {
+async function hashString(str) 
+{
+    // Hashes a string using SHA-256
     const encoder = new TextEncoder();
     const data = encoder.encode(str);
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
@@ -478,6 +509,7 @@ async function hashString(str) {
 
 async function asyncRegister(username, email, password)
 {
+	// Registers the user with the server
 	password = await hashString(password);
 	let response = await fetch(heroku+"/register", {
 			method: "POST",
@@ -515,6 +547,7 @@ async function asyncRegister(username, email, password)
 
 async function login()
 {
+	// Logs in the user with the server
 	const us = document.getElementById("login_user");
 	const pa = document.getElementById("login_pass");
 	const username = us.value;
@@ -561,6 +594,7 @@ async function login()
 
 async function logout()
 {
+	// Logs out the user with the server
 	const token = getCookie("session_token");
 	let response = await fetch(heroku+"/logout", {
 			method: "POST",
@@ -592,6 +626,7 @@ async function logout()
 
 async function checkCookie()
 {
+	// Checks the session cookie with the server
 	const token = getCookie("session_token");
 	
 	let response = await fetch(heroku+"/session", {
@@ -615,6 +650,7 @@ async function checkCookie()
 
 function getCookie(name)
 {
+	// Retrieves the value of a specific cookie by name
 	const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
         const [key, value] = cookie.trim().split('=');
@@ -625,6 +661,7 @@ function getCookie(name)
 
 async function loadmain()
 {
+	// Loads the main page from the server and displays it
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -639,6 +676,7 @@ async function loadmain()
 
 async function host()
 {
+	// Loads the host page from the server and displays it
 	if(!loggedIn)
 	{
 		showHostAlert();
@@ -661,6 +699,7 @@ async function host()
 
 async function loaduser()
 {
+	// Loads the user page from the server and displays it
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -683,6 +722,7 @@ async function loaduser()
 
 function playchecklogin()
 {
+	// Checks if user is logged in before joining game
 	if(user.length == 0)
 	{
 		showGuestAlert();
@@ -690,15 +730,19 @@ function playchecklogin()
 	else joingame();
 }
 
-function showGuestAlert() {
+function showGuestAlert() 
+{
+	// Displays the guest alert
   document.getElementById('customAlert').style.display = 'block';
 }
 function showHostAlert() {
+  // Displays the host alert
   document.getElementById('customAlert2').style.display = 'block';
 }
 
 function createGuest()
 {
+	// Creates a guest user and joins the game
 	var temp = Math.floor(Math.random() * (123456789 - 1 + 1) + 1);
 	user="Guest-"+temp;
 	joingame();
@@ -706,6 +750,7 @@ function createGuest()
 
 async function setCountdown()
 {
+	// Sets and starts the countdown timer
 	starttime = Date.now();
 	endtime = new Date(starttime+lengthoftime);
 	while(true)
@@ -736,7 +781,9 @@ async function setCountdown()
 		}
 	}
 }
-async function timeRanOut() {
+async function timeRanOut() 
+{
+	// Handles the end of the game when time runs out
 
     if(isHost)
 	{
@@ -762,6 +809,7 @@ async function timeRanOut() {
 
 async function joingame()
 {
+	// Loads the join game page from the server and displays it
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -775,7 +823,9 @@ async function joingame()
 	isHost = false;
 }
 
-async function joinGame() {
+async function joinGame() 
+{
+	// Joins a game with the provided game code
     const code = document.getElementById("game_code").value.trim();
     if (code.length !== 6) {
         document.getElementById('customAlert').style.display = 'block';
@@ -812,7 +862,9 @@ async function joinGame() {
 
 let lobbyHTMLPromise = null;
 
-async function loadlobby(catHTML, gameCode, players) {
+async function loadlobby(catHTML, gameCode, players) 
+{
+	// Loads the lobby page from the server and displays it
     const webapp = document.getElementById("webapp");
 
     if (!lobbyLoaded) {
@@ -866,7 +918,9 @@ async function loadlobby(catHTML, gameCode, players) {
 	}
 }
 
-async function loadlobbyHTML() {
+async function loadlobbyHTML() 
+{
+    // Loads the lobby HTML from the server and displays it
     if (lobbyLoaded) return;
 
     const webapp = document.getElementById("webapp");
@@ -880,7 +934,9 @@ async function loadlobbyHTML() {
     lobbyLoaded = true;
 }
 
-async function populateLobby(catHTML, gameCode, players) {
+async function populateLobby(catHTML, gameCode, players) 
+{
+	// Populates the lobby with the provided category HTML, game code, and player list
     await loadlobbyHTML();
 
     const catdisplay = document.getElementById("catdisplay");
@@ -893,7 +949,9 @@ async function populateLobby(catHTML, gameCode, players) {
 }
 
 
-async function submitLobbyParams() {
+async function submitLobbyParams()
+{
+	// Submits lobby parameters to the server and initializes the lobby
     const minutes = parseInt(document.getElementById("minutesInput").value);
     if (isNaN(minutes) || minutes < 0) return alert("Enter valid minutes");
 
@@ -918,7 +976,9 @@ async function submitLobbyParams() {
 	await getLobbyCode();
 }
 
-async function createLobby(catHTML, gameCode, players) {
+async function createLobby(catHTML, gameCode, players) 
+{
+	// Creates the lobby with the provided category HTML, game code, and player list
     const webapp = document.getElementById("webapp");
 
     if (!document.getElementById("lobby-container")) {
@@ -945,7 +1005,9 @@ async function createLobby(catHTML, gameCode, players) {
     setupWebSocketHandlers();
 }
 
-async function getLobbyCode() {
+async function getLobbyCode() 
+{
+	// Retrieves and displays the game code in the lobby
     const codedisplay = document.getElementById("codedisplay");
     if (!codedisplay) {
         console.error("Lobby HTML not loaded yet. Cannot set game code.");
@@ -965,7 +1027,9 @@ async function getLobbyCode() {
     }
 }
 
-function handleWSMessage(event) {
+function handleWSMessage(event) 
+{
+	// Handles incoming WebSocket messages
     const data = JSON.parse(event.data);
 
     if (data.type === "players_update") {
@@ -973,7 +1037,11 @@ function handleWSMessage(event) {
             document.getElementById("player1"),
             document.getElementById("player2"),
             document.getElementById("player3"),
-            document.getElementById("player4")
+            document.getElementById("player4"),
+            document.getElementById("player5"),
+            document.getElementById("player6"),
+            document.getElementById("player7"),
+            document.getElementById("player8")
         ];
         data.players.forEach((player, index) => {
             if (playerElements[index]) playerElements[index].textContent = player;
@@ -981,7 +1049,9 @@ function handleWSMessage(event) {
     }
 }
 
-function setupWebSocketHandlers() {
+function setupWebSocketHandlers() 
+{
+	// Sets up WebSocket event handlers
     if (!ws) return;
 
     ws.onmessage = function(event) {
@@ -989,45 +1059,59 @@ function setupWebSocketHandlers() {
         
 		console.log(data.type);
 		
-        if (data.type === "players_update") {
-            // This is called when the full player list is broadcast
+        if (data.type === "players_update") 
+		{
+			// Update player list in lobby
             loadlobby(null, null, data.players);
         }
         
-        if (data.type === "player_disconnected") {
-            // A regular player left - refresh the lobby
+        if (data.type === "player_disconnected") 
+		{
+			// Update player list in lobby
             console.log(`Player ${data.username} disconnected`);
             loadlobby(null, null, data.players);
         }
         
-        if (data.type === "start_game") {
+        if (data.type === "start_game") 
+		{
+			// Initialize game UI
             const webapp = document.getElementById("webapp");
             webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">`+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
         }
         
-        if (data.type === "host_disconnected") {
+        if (data.type === "host_disconnected") 
+		{
+			// Handle host disconnection
             alert(data.message || "The host has disconnected. The lobby is closed.");
             ws.close();
             window.location.href = "/FrontEnd/";
         }
         
-        if (data.type === "timer_update") {
+        if (data.type === "timer_update") 
+		{
+			// Update timer display
             const timerDiv = document.getElementById("time");
             if (timerDiv) {
                 timerDiv.innerHTML = `<p>${data.time}</p>`;
             }
         }
         
-        if (data.type === "timer_end") {
+        if (data.type === "timer_end") 
+		{
+			// Handle timer end
             document.getElementById("time").innerHTML = `<p>00:00</p>`;
             timeRanOut();
         }
 		
-		if (data.type === "team_cards") {
+		if (data.type === "team_cards") 
+		{
+			// Display team cards
 			console.log(`Received cards for ${data.team}:`, data.cards);
 			displayTeamCards(data.cards, data.team);
 		}
-		if (data.type === "teams_assigned") {
+		if (data.type === "teams_assigned") 
+		{
+			// Assign teams and roles
 			console.log("Teams assigned successfully:", data.teams);
 			for (const [teamName, members] of Object.entries(data.teams)) {
 				if (members.includes(user)) {
@@ -1040,13 +1124,17 @@ function setupWebSocketHandlers() {
 			}
 			console.log("My team:", myTeam, "Role:", myRole);
 		}
-		if (data.type === "question") {
+		if (data.type === "question") 
+		{
+			// Display question and answers
             displayQuestion(data, "");
 			console.log("question")
 			displayAns(data, document.getElementById("webapp"));
             
 		}
-		if (data.type === "answer_result") {
+		if (data.type === "answer_result") 
+		{
+			// Process answer result
 			console.log("Answer result received:", data);
 
 			if (data.status == "correct")
@@ -1062,15 +1150,20 @@ function setupWebSocketHandlers() {
 			document.getElementById("score").innerHTML = "Score: " + score;
 			displayTeamCards(data.team_cards);
 		}
-		if (data.type === "game_win") {
+		if (data.type === "game_win") 
+		{
+			// Handle game win
 			showServerWin(data);
 		}
 
-		if (data.type === "game_lose") {
+		if (data.type === "game_lose") 
+		{
+			// Handle game lose
 			showServerLose(data);
 		}
 		if (data.type === "halftime") 
 		{
+			// Handle halftime event
 			console.log("Halftime reached!");
 
 			const webapp = document.getElementById("webapp");
@@ -1100,7 +1193,7 @@ function setupWebSocketHandlers() {
 				msg.className = "halftime-banner";
 				msg.innerHTML = `
 					<div class="halftime-message">
-						<h2>🎉 Halftime!</h2>
+						<h2>Halftime!</h2>
 						<p>The game is halfway over. Keep going!</p>
 					</div>
 				`;
@@ -1111,7 +1204,9 @@ function setupWebSocketHandlers() {
 		}
     };
 
-    ws.onopen = function() {
+    ws.onopen = function() 
+	{
+		// Handle WebSocket connection open
         console.log("WebSocket connection established for game:", game_id);
         heartbeatInterval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
@@ -1120,35 +1215,44 @@ function setupWebSocketHandlers() {
         }, 30000);
     };
 
-    ws.onclose = function() {
+    ws.onclose = function() 
+	{
+		// Handle WebSocket connection close
         console.log("WebSocket closed");
         clearInterval(heartbeatInterval);
     };
 
-    ws.onerror = function(err) {
+    ws.onerror = function(err) 
+	{
+		// Handle WebSocket error
         console.error("WebSocket error:", err);
     };
 }
 
 function leaveGame()
 {
+	// Leaves the current game and reloads the page
 	ws.close();
 	location.reload();
 }
 
 function closeAlert2()
 {
+	// Closes the host alert
 	document.getElementById('customAlert2').style.display = 'none';
 }
 
 async function startGameTest()
 {
+	// Starts the game by assigning teams and sending start signal
 	ws.send(JSON.stringify({ type: "assign_teams" }));
 	console.log("Sending assign_teams");
 	ws.send(JSON.stringify({ type: "start_game" }));
 }
 
-function displayTeamCards(cards, team) {
+function displayTeamCards(cards, team) 
+{
+	// Displays the team cards for the specified team
     const webapp = document.getElementById("webapp");
     webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
     
@@ -1167,7 +1271,9 @@ function displayTeamCards(cards, team) {
     const isAnswerer = myRole.includes("answerer");
     const clickable = myRole.includes("picker") || myRole.includes("both");
 
-    function buildCard(card, index) {
+    function buildCard(card, index) 
+	{
+		// Builds the HTML for a single card
         const identifier = card[0];
         const category = card[1];
         const difficulty = card[2];
@@ -1201,7 +1307,9 @@ function displayTeamCards(cards, team) {
     dispCards.innerHTML = html;
 }
 
-function displayTeamCards(cards) {
+function displayTeamCards(cards) 
+{
+	// Displays the team cards for the player's own team (alternative version)
     const webapp = document.getElementById("webapp");
     webapp.innerHTML = `<p id="team"></p><div id="time"></div><h5 id="score">Score: `+score+`</h5><p id="leadin"></p><div align=center><div id="cards"></div></div>`;
     
@@ -1220,7 +1328,9 @@ function displayTeamCards(cards) {
     const isAnswerer = myRole.includes("answerer");
     const clickable = myRole.includes("picker") || myRole.includes("both");
 
-    function buildCard(card, index) {
+    function buildCard(card, index) 
+	{
+		// Builds the HTML for a single card
         const identifier = card[0];
         const category = card[1];
         const difficulty = card[2];
@@ -1254,8 +1364,9 @@ function displayTeamCards(cards) {
     dispCards.innerHTML = html;
 }
 
-function displayQuestion(msg, hi) {
-
+function displayQuestion(msg, hi) 
+{
+	// Displays the current question
     const webapp = document.getElementById("webapp");
 	
 	
@@ -1278,8 +1389,9 @@ function displayQuestion(msg, hi) {
 	categoryTemp = msg.question.category;
 }
 
-function displayQuestion2() {
-
+function displayQuestion2() 
+{
+	// Displays the current question (alternative version)
     const webapp = document.getElementById("webapp");
 	console.log(currentQuestion);
     const leadin = currentQuestion.leadin || "";
@@ -1299,7 +1411,7 @@ function displayQuestion2() {
 	categoryTemp = currentQuestion.category;
 }
 
-
+// Event listener for DOM content loaded
 document.addEventListener("DOMContentLoaded", () => {
    if (sessionStorage.getItem("reloaded") === "true") {
 	sessionStorage.removeItem("reloaded");
@@ -1307,13 +1419,15 @@ document.addEventListener("DOMContentLoaded", () => {
    checkCookie();
 });
 
+// Event listener for beforeunload to set reload flag
 window.addEventListener("beforeunload", () => {
   sessionStorage.setItem("reloaded", "true");
   
 });
 
-
-function showServerWin(data) {
+function showServerWin(data) 
+{
+	// Functions to show win screens
     let webapp = document.getElementById("webapp");
 
     webapp.innerHTML = `
@@ -1325,7 +1439,10 @@ function showServerWin(data) {
     setTimeout(() => location.reload(), 5000);
 }
 
-function showServerLose(data) {
+
+function showServerLose(data) 
+{
+	// Function to show lose screen
     let webapp = document.getElementById("webapp");
 
     webapp.innerHTML = `
@@ -1337,7 +1454,9 @@ function showServerLose(data) {
     setTimeout(() => location.reload(), 5000);
 }
 
-function updateRoleUI() {
+function updateRoleUI() 
+{
+	// Updates the UI based on the player's role
     console.log("Updating UI for role:", myRole);
 
     const cardElements = document.querySelectorAll(".card-option");
@@ -1366,6 +1485,7 @@ function updateRoleUI() {
 
 async function genStats()
 {
+	// Displays general user statistics
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -1393,6 +1513,7 @@ async function genStats()
 
 async function statOpen()
 {
+	// Displays OpenTDB user statistics
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
@@ -1443,6 +1564,7 @@ async function statOpen()
 
 async function statQB()
 {
+	// Displays QBReader user statistics
 	const webapp = document.getElementById("webapp");
 	let response = await fetch(heroku+"/load", {
 			method: "POST",
